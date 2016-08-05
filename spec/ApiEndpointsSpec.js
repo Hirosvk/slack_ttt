@@ -1,4 +1,6 @@
 describe("Tic-Tac-Toe", function(){
+// JSON response type
+
 
   describe("New Game", function(){
     it("starts the game with opponent's username as parameter, and returns the empty board");
@@ -10,6 +12,7 @@ describe("Tic-Tac-Toe", function(){
 
     // Interactive Button
     it("askes if you want to abandon the previous game if there is a game in progress");
+    it("the opponent has to accept the challenge before playing");
 
     // API
     it("returns error msg if the opponent is not logged in");
@@ -25,7 +28,15 @@ describe("Tic-Tac-Toe", function(){
     it("reutnrs the result if the game is a tie");
   });
 
-  describe("reset game", function(){
+  describe("Request Game Status", function(){
+    it("returns the current board");
+  });
+
+  describe("Stats", function(){
+    it("provides the recent games of the channel");
+  });
+
+  describe("cancel game", function(){
     it("the starter of the game can cancel the game");
 
     // Interactive Button
