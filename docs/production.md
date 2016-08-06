@@ -14,6 +14,7 @@
 * test on channels
 
 ## 4. extra feature (1.5 day)
+* change Board#render to output code block version of the board
 * setup Interactive Buttons & Slack API
 * documentation
 

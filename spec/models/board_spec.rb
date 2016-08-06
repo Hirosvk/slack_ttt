@@ -93,20 +93,20 @@ describe Board do
       empty_board.process_new_move("challenged", 7)
       expect(empty_board.grid).to eq("123456X89")
       empty_board.process_new_move("starter", 1)
-      expect(empty_board.grid).to eq("023456X89")
+      expect(empty_board.grid).to eq("O23456X89")
     end
 
     it "switches the current_mark" do
       empty_board.process_new_move("challenged", 7)
-      expect(empty_board.current_mark).to eq("0")
+      expect(empty_board.current_mark).to eq("O")
       empty_board.process_new_move("starter", 1)
       expect(empty_board.current_mark).to eq("X")
     end
 
     it "raises error when the mark is not from the current player" do
-      expect{empty_board.process_new_move("starter", 1)}.to raise_error(TTTError, "It's challenged's turn")
+      expect{empty_board.process_new_move("starter", 1)}.to raise_error(TTTError, "It's not your turn!")
       empty_board.process_new_move("challenged", 7)
-      expect{empty_board.process_new_move("challenged", 5)}.to raise_error(TTTError, "It's starter's turn")
+      expect{empty_board.process_new_move("challenged", 5)}.to raise_error(TTTError, "It's not your turn!")
     end
 
     it "raises error if the board's status is 'C'(completed)" do
@@ -142,16 +142,23 @@ describe Board do
 
   describe "#render" do
     it "returns the board in readable format" do
-      expect(almost_win.render).to eq("X-2-3\n0-X-6\n0-8-9\n")
-      expect(empty_board.render).to eq("1-2-3\n4-5-6\n7-8-9\n")
+      expect(almost_win.render).to eq("X-2-3\nO-X-6\nO-8-9\nIt's challenged's turn(X)")
+      # expect(almost_win.render).to eq("` X | 2 | 3 `\n` 4 | 5 | 6 `\n` 7 | 8 | 9 `\nIt's challenged's turn(X)")
+      empty_board.process_new_move("challenged", 1)
+      expect(empty_board.render).to eq("X-2-3\n4-5-6\n7-8-9\nIt's starter's turn(O)")
     end
+
+    it "returns whose turn it is on the first turn" do
+      expect(empty_board.render).to eq("1-2-3\n4-5-6\n7-8-9\nThis is a new game! It's challenged's turn(X)")
+    end
+
     it "includes the winner in the response if there is a winner" do
       almost_win.process_new_move("challenged", 9)
-      expect(almost_win.render).to eq("X-2-3\n0-X-6\n0-8-X\nchallenged has won!")
+      expect(almost_win.render).to eq("X-2-3\nO-X-6\nO-8-X\n*challenged has won!*")
     end
     it "says that it's a tie if the board is tie" do
       almost_tie.process_new_move("challenged", 9)
-      expect(almost_tie.render).to eq("0-X-X\nX-X-0\n0-0-X\nIt's a tie!")
+      expect(almost_tie.render).to eq("O-X-X\nX-X-O\nO-O-X\n*It's a tie!*")
     end
   end
 
@@ -167,7 +174,7 @@ describe Board do
       empty_board.abandon
       game = Board.find_most_recent_game("00000")
       expect(game.id).to eq(empty_board.id)
-      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\nThis game has been abandoned")
+      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\n*This game has been abandoned*")
     end
 
     it "returns the most recent one if there are multiple archived games" do
@@ -192,11 +199,11 @@ describe Board do
     end
   end
 
-  # describe "::recent_results" do
-  #   it "returns the list of recent games of the channel"
-  # end
-  #
-  # describe "::recent_resulsts_all" do
-  #   it "returns the list of recent games of all the channels"
-  # end
+  describe "::recent_results" do
+    it "returns the list of recent games of the channel"
+  end
+
+  describe "::recent_resulsts_all" do
+    it "returns the list of recent games of all the channels"
+  end
 end

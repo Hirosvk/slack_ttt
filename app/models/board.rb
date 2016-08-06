@@ -33,7 +33,7 @@ class Board < ActiveRecord::Base
   end
 
   def abandon
-    self.update!(status: "C", message: "This game has been abandoned")
+    self.update!(status: "C", message: "*This game has been abandoned*")
   end
 
   def process_new_move(player, position)
@@ -41,10 +41,11 @@ class Board < ActiveRecord::Base
       raise TTTError.new("This game has already been completed or abandoned")
     end
 
-    whose_turn = self.send(current_player)
-    if whose_turn != player
-      raise TTTError.new("It's #{whose_turn}'s turn")
-    else
+    if player == next_player
+      raise TTTError.new("It's not your turn!")
+    elsif player != current_player
+      raise TTTError.new("You are not playing this game")
+    elsif player == current_player
       mark(position)
     end
 
@@ -65,41 +66,18 @@ class Board < ActiveRecord::Base
   end
 
 private
-  ## custom_validation
-  def set_initial_state
-    self.grid ||= "123456789"
-    self.current_mark ||= "X"
-    self.status ||= "IP"
-  end
+  ## helper methods
 
-  def check_players
-    if self.x == self.o
-      errors[:resp] << "You can't challenge yourself!"
-    elsif self.x.length < 1
-      errors[:resp] << "You need to challenge another player"
-    end
-  end
-
-  def other_game_IP?
-    return if self.status == "C"
-    games = self.class.where(channel_id: self.channel_id)
-    games.each do |board|
-      if board.status == "IP" && board.id != self.id
-        errors[:resp] << "Only one game can take place per channel"
-        break
-      end
-    end
-  end
-
-  ## other helper methods
   def mark(position)
     new_grid = self.grid
     if new_grid[position - 1] =~ /[^1-9]/
       raise TTTError.new("That space is already marked")
     end
+
     new_grid[position - 1] = current_mark
-    next_mark = (current_mark == "X") ? "0" : "X"
-    self.update!(grid: new_grid, current_mark: next_mark)
+    self.update!(grid: new_grid,
+                 current_mark: next_mark,
+                 message: "It's #{next_player}'s turn(#{next_mark})")
   end
 
   def check_for_winner
@@ -108,10 +86,10 @@ private
       winner_name = self.send(winner)
       self.update!(status: "C",
                    winner: winner_name,
-                   message: "#{winner_name} has won!")
+                   message: "*#{winner_name} has won!*")
     elsif filled?
       self.update!(status: "C",
-                   message: "It's a tie!")
+                   message: "*It's a tie!*")
     end
   end
 
@@ -132,12 +110,48 @@ private
   end
 
   def filled?
-    !!(self.grid =~ /^[X0]+$/)
+    !!(self.grid =~ /^[XO]+$/)
+  end
+
+  def next_mark
+    current_mark == "O" ? "X" : "O"
   end
 
   def current_player
-    current_mark == "X" ? "x" : "o"
+    column = current_mark == "X" ? "x" : "o"
+    self.send(column)
   end
 
+  def next_player
+    column = current_mark == "O" ? "x" : "o"
+    self.send(column)
+  end
+
+  ## custom_validation
+  def set_initial_state
+    self.grid ||= "123456789"
+    self.current_mark ||= "X"
+    self.status ||= "IP"
+    self.message ||= "This is a new game! It's #{current_player}'s turn(#{current_mark})"
+  end
+
+  def check_players
+    if self.x == self.o
+      errors[:resp] << "You can't challenge yourself!"
+    elsif self.x.length < 1
+      errors[:resp] << "You need to challenge another player"
+    end
+  end
+
+  def other_game_IP?
+    return if self.status == "C"
+    games = self.class.where(channel_id: self.channel_id)
+    games.each do |board|
+      if board.status == "IP" && board.id != self.id
+        errors[:resp] << "Only one game can take place per channel"
+        break
+      end
+    end
+  end
 
 end
