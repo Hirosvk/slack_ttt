@@ -2,107 +2,195 @@
 #
 # Table name: boards
 #
-#  id         :integer          not null, primary key
-#  x_player   :string           not null
-#  o_player   :string           not null
-#  channel_id :string           not null
-#  status     :string           not null
-#  winner     :string
-#  grid       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id           :integer          not null, primary key
+#  x            :string           not null
+#  o            :string           not null
+#  channel_id   :string           not null
+#  status       :string           not null
+#  winner       :string
+#  grid         :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  current_mark :string           not null
+#  message      :string
 #
 
 require 'spec_helper'
 require 'rails_helper'
 
 describe Board do
+  let(:empty_board){Board.create!(o: "starter", x: "challenged", channel_id: "00000")}
+  let(:almost_win){
+    board = Board.create!(o: "starter", x: "challenged", channel_id: "12345")
+    board.process_new_move("challenged", 1)
+    board.process_new_move("starter", 4)
+    board.process_new_move("challenged", 5)
+    board.process_new_move("starter", 7)
+    board
+  }
+  let(:almost_tie){
+    board = Board.create!(o: "starter", x: "challenged", channel_id: "67890")
+    board.process_new_move("challenged", 2)
+    board.process_new_move("starter", 1)
+    board.process_new_move("challenged", 3)
+    board.process_new_move("starter", 6)
+    board.process_new_move("challenged", 4)
+    board.process_new_move("starter", 7)
+    board.process_new_move("challenged", 5)
+    board.process_new_move("starter", 8)
+    board
+  }
+
   describe "New Game" do
     it "creates a game with two players' names, and channel id with the status 'IP'" do
-      new_board = Board.new("player1", "player2", "12345")
-      expect(new_board.save!).to_not raise_error
+      new_board = Board.new(o: "starter", x: "challenged", channel_id: "12345")
+      expect{new_board.save!}.to_not raise_error
       expect(new_board.status).to eq("IP")
     end
 
-    it "automatically generates empty 3x3 grid" do
-      new_board = Board.new("player1", "player2", "12345")
-      expect(new_board.grid).to eq("bbbbbbbbb")
+    it "automatically generates empty 3x3 grid as string" do
+      new_board = Board.new(o: "starter", x: "challenged", channel_id: "12345")
+      expect(new_board.grid).to eq("123456789")
+    end
+
+    it "sets current_mark to challenged" do
+      new_board = Board.new(o: "starter", x: "challenged", channel_id: "12345")
+      expect(new_board.current_mark).to eq("X")
     end
 
     it "raises error when a player's name is missing" do
-      new_board = Board.new("player1", "", "12345")
-      expect(new_board.save!).to raise_error("You need to challenge another player")
+      new_board = Board.new(o: "starter", x: "", channel_id: "12345")
+      expect{new_board.save!}.to raise_error(/\s*You need to challenge another player\s*/)
     end
 
     it "raises error when players names are the same" do
-      new_board = Board.new("player1", "player1", "12345")
-      expect(new_board.save!).to raise_error("you can't challenge yourself!")
+      new_board = Board.new(o: "starter", x: "starter", channel_id: "12345")
+      expect{new_board.save!}.to raise_error(/\s*You can't challenge yourself!\s*/)
     end
 
     it "does not allow more than one game per channel at a time" do
-      board1 = Board.create("player1", "player2", "12345")
-      board2 = Board.new("player3", "player3", "12345")
-      expect(board2.save!).to raise_error("Only one game can take place per channel")
+      board1 = Board.create(o: "starter", x: "challenged", channel_id: "12345")
+      board2 = Board.new(o: "player3", x: "player4", channel_id: "12345")
+      expect{board2.save!}.to raise_error(/\s*Only one game can take place per channel\s*/)
+    end
+
+    it "allows new game for the channel as long as the past games are completed" do
+      board1 = Board.create(o: "starter", x: "challenged", channel_id: "12345")
+      board1.abandon
+      board2 = Board.new(o: "player3", x: "player4", channel_id: "12345")
+      expect{board2.save!}.to_not raise_error
     end
 
     it "allows one player to play multiple games in different channels" do
-      board1 = Board.create("player1", "player2", "12345")
-      board2 = Board.new("player1", "player2", "67890")
-      expect(board2.save!).to_not raise_error
+      board1 = Board.create(o: "starter", x: "challenged", channel_id: "12345")
+      board2 = Board.new(o: "starter", x: "challenged", channel_id: "67890")
+      expect{board2.save!}.to_not raise_error
     end
   end
 
   describe "#mark" do
-    let(:empty_board){Board.create("player1", "player2", "12345")}
-
     it "places the mark and updates the board" do
-      empty_board.move("player1", [2,0])
-      expect(empty_board.gird).to eq("bbbbbbxbb")
-      empty_board.move("player2", [0,0])
-      expect(empty_board.gird).to eq("obbbbbxbb")
+      empty_board.process_new_move("challenged", 7)
+      expect(empty_board.grid).to eq("123456X89")
+      empty_board.process_new_move("starter", 1)
+      expect(empty_board.grid).to eq("023456X89")
     end
 
-    it "raises error when the move is not from the current player" do
-      empty_board.move("player1", [2,0])
-      expect{empty_board.move("player1", [0,0])}.to raise_error("It's player2's turn")
+    it "switches the current_mark" do
+      empty_board.process_new_move("challenged", 7)
+      expect(empty_board.current_mark).to eq("0")
+      empty_board.process_new_move("starter", 1)
+      expect(empty_board.current_mark).to eq("X")
     end
 
-    it "raises error if the board's status is 'C'(completed)"
-    it "if the new mark is a winning move, sets status to 'C', and updates winner"
-    it "if the new mark make the game tie, sets status to 'C', and leaves the winner to NULL"
+    it "raises error when the mark is not from the current player" do
+      expect{empty_board.process_new_move("starter", 1)}.to raise_error(TTTError, "It's challenged's turn")
+      empty_board.process_new_move("challenged", 7)
+      expect{empty_board.process_new_move("challenged", 5)}.to raise_error(TTTError, "It's starter's turn")
+    end
 
+    it "raises error if the board's status is 'C'(completed)" do
+      empty_board.update!(status: "C")
+      expect{empty_board.process_new_move("challenged", 7)}.to raise_error(TTTError, "This game has already been completed or abandoned")
+    end
+
+    it "raises error if player tries to mark the square that's already been marked" do
+      empty_board.process_new_move("challenged", 1)
+      expect{ empty_board.process_new_move("starter", 1) }.to raise_error(TTTError, "That space is already marked")
+    end
+
+    it "no winner until the game is won" do
+      expect(almost_win.status).to eq("IP")
+      expect(almost_win.winner).to eq(nil)
+
+      expect(almost_tie.status).to eq("IP")
+      expect(almost_tie.winner).to eq(nil)
+    end
+
+    it "if the new mark is the winning mark, sets status to 'C', and updates winner" do
+      almost_win.process_new_move("challenged", 9)
+      expect(almost_win.status).to eq("C")
+      expect(almost_win.winner).to eq("challenged")
+    end
+
+    it "if the new mark makes the game tie, sets status to 'C', and leaves the winner as NULL" do
+      almost_tie.process_new_move("challenged", 9)
+      expect(almost_tie.status).to eq("C")
+      expect(almost_tie.winner).to eq(nil)
+    end
   end
 
   describe "#render" do
-    it "returns the current board of the channel"
-    it "returns a message if no game is in progress for the channel"
-    it "includes the winner in the response if there is a winner"
-    it "says that it's a tie if the board is tie"
+    it "returns the board in readable format" do
+      expect(almost_win.render).to eq("X-2-3\n0-X-6\n0-8-9\n")
+      expect(empty_board.render).to eq("1-2-3\n4-5-6\n7-8-9\n")
+    end
+    it "includes the winner in the response if there is a winner" do
+      almost_win.process_new_move("challenged", 9)
+      expect(almost_win.render).to eq("X-2-3\n0-X-6\n0-8-X\nchallenged has won!")
+    end
+    it "says that it's a tie if the board is tie" do
+      almost_tie.process_new_move("challenged", 9)
+      expect(almost_tie.render).to eq("0-X-X\nX-X-0\n0-0-X\nIt's a tie!")
+    end
   end
 
-  describe "#abandon" do
-    it "sets the game's status to 'C'"
+  describe "::find_most_recent_game" do
+    it "takes the channel id and returns the current game if any game is in progress" do
+      empty_board.process_new_move("challenged", 9)
+      game = Board.find_most_recent_game("00000")
+      expect(game.id).to eq(empty_board.id)
+    end
+
+    it "returns most recent completed game if no game is in progress" do
+      empty_board.process_new_move("challenged", 9)
+      empty_board.abandon
+      game = Board.find_most_recent_game("00000")
+      expect(game.id).to eq(empty_board.id)
+      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\nThis game has been abandoned")
+    end
+
+    it "returns the most recent one if there are multiple archived games" do
+      empty_board.process_new_move("challenged", 9)
+      empty_board.abandon
+      new_board = Board.create!(x: "Bob", o: "Sally", channel_id: "00000")
+      new_board.abandon
+
+      game = Board.find_most_recent_game("00000")
+      expect(game.id).to eq(new_board.id)
+    end
+
+    it "returns the current one if there are multiple archived games" do
+      empty_board.process_new_move("challenged", 9)
+      empty_board.abandon
+      new_board = Board.create!(x: "Bob", o: "Sally", channel_id: "00000")
+      new_board.abandon
+      newest_board = Board.create!(x: "Sally", o: "Bob", channel_id: "00000")
+
+      game = Board.find_most_recent_game("00000")
+      expect(game.id).to eq(newest_board.id)
+    end
   end
-
-  describe "#winner?" do
-    it "returns the winner's username if the game has been won"
-    it "returns nil if there is no winner"
-  end
-
-  describe "#tie?" do
-    it "returns true if the game is tie(all spaces filled with no winner)"
-    it "returns false if the game is in progress"
-  end
-
-  describe "::render_last_game" do
-    it "renders the most recent completed game's board"
-  end
-
-  describe "::get_current_game" do
-    it "returns the board of the channel's current game"
-  end
-
-
 
   # describe "::recent_results" do
   #   it "returns the list of recent games of the channel"

@@ -11,20 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160805200915) do
+ActiveRecord::Schema.define(version: 20160806060957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "boards", force: :cascade do |t|
-    t.string   "x_player",   null: false
-    t.string   "o_player",   null: false
-    t.string   "channel_id", null: false
-    t.string   "status",     null: false
+    t.string   "x",            null: false
+    t.string   "o",            null: false
+    t.string   "channel_id",   null: false
+    t.string   "status",       null: false
     t.string   "winner"
-    t.string   "grid",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "grid",         null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "current_mark", null: false
+    t.string   "message"
   end
 
 end
