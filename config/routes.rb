@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   namespace :api do
     get 'games/spec' => 'games#spec'
     post 'games/challenge' => 'games#challenge'
+    post 'games/accept' => 'games#accept'
+    post 'games/destroy_all' => 'games#destroy_all'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

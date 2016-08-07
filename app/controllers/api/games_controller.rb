@@ -18,4 +18,15 @@ class Api::GamesController < ApplicationController
       render json: {text: @challenge.errors[:resp].first}
     end
   end
+
+  def accept
+    render json: {text: params[:user_name]}
+  end
+
+  def destroy_all
+    ## test purpose only
+    Challenge.destroy_all
+    Board.destroy_all
+    render json: {text: "All Challenges/Boards Destroyed"}
+  end
 end

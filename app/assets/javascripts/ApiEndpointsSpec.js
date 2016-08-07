@@ -9,9 +9,9 @@ describe("Tic-Tac-Toe Game", function(){
       channel_id: "C2147483705",
       channel_name: "test",
       user_id: "U2147483697",
-      user_name: "Steve",
-      command: "/weather",
-      text: "94070",
+      user_name: "",
+      command: "",
+      text: "",
       response_url: "https://hooks.slack.com/commands/1234/5678"
     };
     successResponseKeeper(false);
@@ -31,24 +31,144 @@ describe("Tic-Tac-Toe Game", function(){
   //   });
 
   describe("/challenge [opponent's username]", function(){
-    beforeEach(function(done){
-      defaultContent.command = "/challenge";
-      defaultContent.text = "Silly";
-      makeAjaxCall(defaultContent, successResponseKeeper, errorResponseKeeper, done);
-    });
-    it("starts the game with opponent's username as parameter, and asks the opponent's consent", function(done){
-      expect(successResponseKeeper().text).toMatch("Steve challenges Silly");
-      done();
+    afterEach(function(){
+      defaultContent.command = "/destroy_all"
+      makeAjaxCall(defaultContent, ignore, ignore);
     });
 
-    it("if the challenged player accepts the game, it returns the empty gameboard");
-    it("the challenge expires in 1 minutes");
-    it("allows only one challenge per channel at a time");
+    describe("starts the game with opponent's username as parameter, and asks the opponent's consent", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, successResponseKeeper, errorResponseKeeper, done);
+      });
+      it("spec", function(done){
+        expect(successResponseKeeper().text).toMatch("Steve challenges Silly");
+        done();
+      });
+    });
 
-    it("returns error msg if the opponent's username is missing");
-    it("returns error msg if a game is alreayd taking place in the channel");
-    it("handles multiple games taking place in different channels");
+    describe("if the challenged player accepts the game, it returns the empty gameboard", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, function(){
+          let acceptContent = Object.assign({}, defaultContent);
+          acceptContent.command = "/accept";
+          acceptContent.user_name = "Silly";
+          makeAjaxCall(acceptContent, successResponseKeeper, errorResponseKeeper, done);
+        });
 
+      });
+      it("spec", function(done){
+        expect(successResponseKeeper().text).toMatch("This is a new game! It's Silly's turn(X)");
+        done();
+      });
+    });
+
+    // describe("the challenge expires in 1 minutes");
+
+    describe("allows only one challenge per channel at a time", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, secondCall, log);
+
+        function secondCall(){
+          let secondContent = Object.assign({}, defaultContent)
+          secondContent.user_name = "Jesse";
+          secondContent.command = "/challenge";
+          secondContent.text = "Mateo";
+          makeAjaxCall(secondContent, log, errorResponseKeeper, done);
+        };
+      });
+
+      it("spec", function(done){
+        expect(errorResponseKeeper().text).toMatch("You cannot start a new game while there is a pending challenge");
+        done();
+      });
+    });
+
+    describe("returns error msg if the opponent's username is missing", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        makeAjaxCall(defaultContent, log, errorResponseKeeper, done);
+      });
+
+      it("spec", function(done){
+        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        done();
+      });
+    });
+
+    describe("returns error msg if a game is alreayd taking place in the channel", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, secondCall, log);
+
+        function secondCall(){
+          let acceptContent = Object.assign({}, defaultContent);
+          acceptContent.command = "/accept";
+          acceptContent.user_name = "Silly";
+          makeAjaxCall(acceptContent, thirdCall, log);
+        };
+
+        function thirdCall(){
+          let thirdContent = Object.assign({}, defaultContent);
+          thirdContent.user_name = "Hiro";
+          thirdContent.command = "/challenge";
+          thirdContent.text = "Dan";
+          makeAjaxCall(thirdContent, log, errorResponseKeeper, done);
+        };
+      });
+      it("spec", function(done){
+        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        done();
+      });
+    });
+
+    describe("handles multiple games taking place in different channels", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, secondCall, log);
+
+        function secondCall(){
+          let acceptContent = Object.assign({}, defaultContent);
+          acceptContent.command = "/accept";
+          acceptContent.user_name = "Silly";
+          makeAjaxCall(acceptContent, thirdCall, log);
+        };
+
+        function thirdCall(){
+          let thirdContent = Object.assign({}, defaultContent);
+          thirdContent.user_name = "Hiro";
+          thirdContent.command = "/challenge";
+          thirdContent.text = "Dan";
+          thirdContent.channel_id = "12345";
+          makeAjaxCall(thirdContent, forthCall, log);
+        };
+
+        function fourthCall(){
+          let fourthContent = Object.assign({}, defaultContent);
+          fourthContent.user_name = "Dan";
+          fourthContent.command = "/accept";
+          fourthContent.channel_id = "12345";
+          makeAjaxCall(fourthContent, successResponseKeeper, errorResponseKeeper, done);
+        }
+      });
+      it("spec", function(done){
+        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        done();
+      });
+    });
     // API
     it("returns error msg if the opponent is not logged in");
   });
@@ -91,7 +211,7 @@ describe("Tic-Tac-Toe Game", function(){
     it("can be used to cancel challenge");
 
     // Buttons
-    it("lets users choose yes/no with buttons")
+    it("lets users choose yes/no with buttons");
     it("Asks for confirmation before abandonment");
     // API & Event Listener
     it("when the player logs out the game is automatically abandoned");
@@ -99,25 +219,21 @@ describe("Tic-Tac-Toe Game", function(){
 
 
 
-  function makeAjaxCall(content, successCallback, errorCallback, done){
+  function makeAjaxCall(content, successCallback, errorCallback, done = undefined){
     let request = new XMLHttpRequest();
-    request.open("POST", "http://localhost:3000/api/games" + content.command, true);
+    request.open("POST", `http://localhost:3000/api/games${content.command}`, true);
     request.onload = function(resp){
       if (request.status === 200){
-        successCallback(JSON.parse(request.responseText))
-        done();
+        successCallback(JSON.parse(request.responseText));
+        if (done) { done(); }
       } else {
         errorCallback(JSON.parse(resp));
-        done();
+        if (done) { done(); }
       }
     }
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     request.send(parseContent(content))
   };
-
-  // function log(resp){
-  //   console.log(resp);
-  // }
 
   function parseContent(content){
     let formatted = "";
@@ -129,6 +245,7 @@ describe("Tic-Tac-Toe Game", function(){
   }
 
   function successResponseKeeper(_resp_s = undefined){
+    // if (_resp_s) { debugger; }
     if (_resp_s !== undefined){
       this._resp_s = _resp_s;
     } else {
@@ -136,11 +253,19 @@ describe("Tic-Tac-Toe Game", function(){
     }
   }
   function errorResponseKeeper(_resp_e = undefined){
+    // if (_resp_e) { debugger; }
     if (_resp_e !== undefined){
       this._resp_e = _resp_e;
     } else {
       return this._resp_e;
     }
+  }
+
+  function log(res){
+    console.log(res);
+  }
+
+  function ignore(){
   }
 
 });
