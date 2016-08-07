@@ -1,4 +1,5 @@
 describe("Tic-Tac-Toe Game", function(){
+// make all error messages ephemeral
 
   let defaultContent = {};
   beforeEach(function(){
@@ -14,37 +15,25 @@ describe("Tic-Tac-Toe Game", function(){
       text: "",
       response_url: "https://hooks.slack.com/commands/1234/5678"
     };
-    successResponseKeeper(false);
-    errorResponseKeeper(false);
+    responseContent(false);
   });
 
-
-  // it("should make a real AJAX request", function () {
-  //   var callback = jasmine.createSpy();
-  //   makeAjaxCall(callback);
-  //   waitsFor(function() {
-  //       return callback.callCount > 0;
-  //   }, "The Ajax call timed out.", 5000);
-  //
-  //   runs(function() {
-  //       expect(callback).toHaveBeenCalled();
-  //   });
+  afterEach(function(){
+    defaultContent.command = "/destroy_all"
+    makeAjaxCall(defaultContent);
+  });
 
   describe("/challenge [opponent's username]", function(){
-    afterEach(function(){
-      defaultContent.command = "/destroy_all"
-      makeAjaxCall(defaultContent, ignore, ignore);
-    });
 
     describe("starts the game with opponent's username as parameter, and asks the opponent's consent", function(){
       beforeEach(function(done){
         defaultContent.user_name = "Steve";
         defaultContent.command = "/challenge";
         defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, successResponseKeeper, errorResponseKeeper, done);
+        makeAjaxCall(defaultContent, done);
       });
       it("spec", function(done){
-        expect(successResponseKeeper().text).toMatch("Steve challenges Silly");
+        expect(responseContent().text).toMatch("Steve challenges Silly");
         done();
       });
     });
@@ -58,36 +47,38 @@ describe("Tic-Tac-Toe Game", function(){
           let acceptContent = Object.assign({}, defaultContent);
           acceptContent.command = "/accept";
           acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, successResponseKeeper, errorResponseKeeper, done);
+          makeAjaxCall(acceptContent, done);
         });
 
       });
       it("spec", function(done){
-        expect(successResponseKeeper().text).toMatch("This is a new game! It's Silly's turn(X)");
+        expect(responseContent().text).toMatch("This is a new game! It's Silly's turn(X)");
         done();
       });
     });
 
-    // describe("the challenge expires in 1 minutes");
+    describe("the challenge expires in 1 minutes", function(){
+      it("pending");
+    });
 
     describe("allows only one challenge per channel at a time", function(){
       beforeEach(function(done){
         defaultContent.user_name = "Steve";
         defaultContent.command = "/challenge";
         defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall, log);
+        makeAjaxCall(defaultContent, secondCall);
 
         function secondCall(){
           let secondContent = Object.assign({}, defaultContent)
           secondContent.user_name = "Jesse";
           secondContent.command = "/challenge";
           secondContent.text = "Mateo";
-          makeAjaxCall(secondContent, log, errorResponseKeeper, done);
+          makeAjaxCall(secondContent, done);
         };
       });
 
       it("spec", function(done){
-        expect(errorResponseKeeper().text).toMatch("You cannot start a new game while there is a pending challenge");
+        expect(responseContent().text).toMatch("You cannot start a new game while there is a pending challenge");
         done();
       });
     });
@@ -96,11 +87,11 @@ describe("Tic-Tac-Toe Game", function(){
       beforeEach(function(done){
         defaultContent.user_name = "Steve";
         defaultContent.command = "/challenge";
-        makeAjaxCall(defaultContent, log, errorResponseKeeper, done);
+        makeAjaxCall(defaultContent, done);
       });
 
       it("spec", function(done){
-        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        expect(responseContent().text).toMatch("You need to challenge another player");
         done();
       });
     });
@@ -110,13 +101,13 @@ describe("Tic-Tac-Toe Game", function(){
         defaultContent.user_name = "Steve";
         defaultContent.command = "/challenge";
         defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall, log);
+        makeAjaxCall(defaultContent, secondCall);
 
         function secondCall(){
           let acceptContent = Object.assign({}, defaultContent);
           acceptContent.command = "/accept";
           acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, thirdCall, log);
+          makeAjaxCall(acceptContent, thirdCall);
         };
 
         function thirdCall(){
@@ -124,11 +115,11 @@ describe("Tic-Tac-Toe Game", function(){
           thirdContent.user_name = "Hiro";
           thirdContent.command = "/challenge";
           thirdContent.text = "Dan";
-          makeAjaxCall(thirdContent, log, errorResponseKeeper, done);
+          makeAjaxCall(thirdContent, done);
         };
       });
       it("spec", function(done){
-        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        expect(responseContent().text).toMatch("You need to challenge another player");
         done();
       });
     });
@@ -138,13 +129,13 @@ describe("Tic-Tac-Toe Game", function(){
         defaultContent.user_name = "Steve";
         defaultContent.command = "/challenge";
         defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall, log);
+        makeAjaxCall(defaultContent, secondCall);
 
         function secondCall(){
           let acceptContent = Object.assign({}, defaultContent);
           acceptContent.command = "/accept";
           acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, thirdCall, log);
+          makeAjaxCall(acceptContent, thirdCall);
         };
 
         function thirdCall(){
@@ -153,7 +144,7 @@ describe("Tic-Tac-Toe Game", function(){
           thirdContent.command = "/challenge";
           thirdContent.text = "Dan";
           thirdContent.channel_id = "12345";
-          makeAjaxCall(thirdContent, forthCall, log);
+          makeAjaxCall(thirdContent, fourthCall);
         };
 
         function fourthCall(){
@@ -161,11 +152,11 @@ describe("Tic-Tac-Toe Game", function(){
           fourthContent.user_name = "Dan";
           fourthContent.command = "/accept";
           fourthContent.channel_id = "12345";
-          makeAjaxCall(fourthContent, successResponseKeeper, errorResponseKeeper, done);
+          makeAjaxCall(fourthContent, done);
         }
       });
       it("spec", function(done){
-        expect(errorResponseKeeper().text).toMatch("You need to challenge another player");
+        expect(responseContent().text).toMatch("This is a new game! It's Dan's turn(X)")
         done();
       });
     });
@@ -174,26 +165,135 @@ describe("Tic-Tac-Toe Game", function(){
   });
 
   describe("/accept", function(){
-    it("when there is no challanges, it returns error msg");
+    describe("when there is no challanges, it returns error msg", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/accept";
+        makeAjaxCall(defaultContent, done);
+      });
+
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("There is not challenge to accept");
+        done();
+      });
+    });
 
     // Buttons
     it("lets users responde with buttons");
   });
 
   describe("/decline", function(){
-    it("returns the confirmation");
-    it("when there is no challanges, it returns error msg");
+    describe("returns the confirmation", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/challenge";
+        defaultContent.text = "Silly";
+        makeAjaxCall(defaultContent, function(){
+          let acceptContent = Object.assign({}, defaultContent);
+          acceptContent.command = "/decline";
+          acceptContent.user_name = "Silly";
+          makeAjaxCall(acceptContent, done);
+        });
+
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("You declined the chalenge from Steve");
+        done();
+      });
+    });
+
+    describe("when there is no challanges, it returns error msg", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/decline";
+        makeAjaxCall(defaultContent, done);
+      });
+
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("There is no challenge to decline");
+        done();
+      });
+    });
   });
 
   describe("/mark [position]", function(){
-    it("takes the position and returns the updated board");
-    it("returns error msg to the moves not by the wrong player");
-    it("returns error msg to the moves by audience");
-    it("returns error msg if the place has been marked already");
+    beforeEach(function(){
+      defaultContent.user_name = "Steve";
+      defaultContent.command = "/challenge";
+      defaultContent.text = "Silly";
+      makeAjaxCall(defaultContent, secondCall);
+
+      function secondCall(){
+        let acceptContent = Object.assign({}, defaultContent);
+        acceptContent.command = "/accept";
+        acceptContent.user_name = "Silly";
+        makeAjaxCall(acceptContent);
+      };
+    })
+
+    describe("takes the position and returns the updated board", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Silly";
+        defaultContent.command = "/mark";
+        defaultContent.text = "1";
+        makeAjaxCall(defaultContent, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("X-2-3\n4-5-6\n7-8-9\nIt's Steve's turn(O)");
+        done();
+      });
+    });
+
+    describe("returns error msg to the moves not by the wrong player", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/mark";
+        defaultContent.text = "1";
+        makeAjaxCall(defaultContent, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("It's not your turn!");
+        done();
+      });
+    });
+
+    describe("returns error msg to the moves by audience", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Daniel";
+        defaultContent.command = "/mark";
+        defaultContent.text = "1";
+        makeAjaxCall(defaultContent, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("You are not playing this game");
+        done();
+      });
+    });
+
+    describe("returns error msg if the place has been marked already", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Silly";
+        defaultContent.command = "/mark";
+        defaultContent.text = "1";
+        makeAjaxCall(defaultContent, secondCall);
+
+        function secondCall(){
+          let secondContent = Object.assign({}, defaultContent);
+          secondContent.user_name = "Steve";
+          secondContent.command = "/mark";
+          secondContent.text = "1";
+          makeAjaxCall(secondContent, done)
+        }
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("That space is already marked");
+        done();
+      });
+    });
+
     it("if the move was the winning move, returns the result");
     it("if the move makes the game tie, it returns the result");
-    it("if the game is over, it it returns error msg");
-    it("when there is no game in progress, it it returns error msg");
+    it("when there is no game in progress, it returns error msg");
   });
 
   describe("/show_board", function(){
@@ -201,14 +301,9 @@ describe("Tic-Tac-Toe Game", function(){
     it("if no game is in progress, it returns the most recent game board and results");
   });
 
-  // describe("/record", function(){
-  //   it("provides the recent games of the channel");
-  // });
-
   describe("/abandon", function(){
     it("Either of the players can abandon the game");
     it("returns error message if you are not a player");
-    it("can be used to cancel challenge");
 
     // Buttons
     it("lets users choose yes/no with buttons");
@@ -217,22 +312,30 @@ describe("Tic-Tac-Toe Game", function(){
     it("when the player logs out the game is automatically abandoned");
   });
 
+  describe("/help", function(){
+    it("returns the instruction of the game");
+  });
 
+  describe("/record", function(){
+    it("provides the recent games' results");
+  });
 
-  function makeAjaxCall(content, successCallback, errorCallback, done = undefined){
+// helper functions
+  function makeAjaxCall(content, successCallback){
     let request = new XMLHttpRequest();
     request.open("POST", `http://localhost:3000/api/games${content.command}`, true);
     request.onload = function(resp){
       if (request.status === 200){
-        successCallback(JSON.parse(request.responseText));
-        if (done) { done(); }
+        responseContent(JSON.parse(request.responseText));
+        if (successCallback) { successCallback(); }
+        // all responses are with status:200
       } else {
-        errorCallback(JSON.parse(resp));
-        if (done) { done(); }
+        console.log(resp);
+        if (successCallback) { successCallback(); }
       }
     }
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    request.send(parseContent(content))
+    request.send(parseContent(content));
   };
 
   function parseContent(content){
@@ -244,28 +347,12 @@ describe("Tic-Tac-Toe Game", function(){
     return formatted.slice(0,formatted.length-1);
   }
 
-  function successResponseKeeper(_resp_s = undefined){
-    // if (_resp_s) { debugger; }
+  function responseContent(_resp_s = undefined){
     if (_resp_s !== undefined){
       this._resp_s = _resp_s;
     } else {
       return this._resp_s;
     }
-  }
-  function errorResponseKeeper(_resp_e = undefined){
-    // if (_resp_e) { debugger; }
-    if (_resp_e !== undefined){
-      this._resp_e = _resp_e;
-    } else {
-      return this._resp_e;
-    }
-  }
-
-  function log(res){
-    console.log(res);
-  }
-
-  function ignore(){
   }
 
 });
