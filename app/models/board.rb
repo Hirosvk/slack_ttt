@@ -33,7 +33,7 @@ class Board < ActiveRecord::Base
   end
 
   def abandon
-    self.update!(status: "C", message: "*This game has been abandoned*")
+    self.update!(status: "C", message: "*This game was abandoned*")
   end
 
   def process_new_move(player, position)

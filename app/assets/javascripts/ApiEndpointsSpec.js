@@ -339,7 +339,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("The last game was abandoned at")
+        expect(responseContent().text).toMatch("This game was abandoned")
         done();
       })
 
@@ -479,7 +479,8 @@ describe("Tic-Tac-Toe Game", function(){
         console.log(resp);
       }
     }
-    request.send();
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    request.send(parseContent(defaultContent));
   };
 
   function parseContent(content){
