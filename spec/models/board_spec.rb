@@ -160,6 +160,31 @@ describe Board do
       almost_tie.process_new_move("challenged", 9)
       expect(almost_tie.render).to eq("O-X-X\nX-X-O\nO-O-X\n*It's a tie!*")
     end
+
+    it "if the game was won more than a minute ago, it shows the resul in the past tense" do
+      almost_win.process_new_move("challenged", 9)
+      two_min_ago = Time.now - 120
+      almost_win.update!(updated_at: two_min_ago)
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      expect(almost_win.render).to match("The last game was won by challenged at #{two_min_ago_s}")
+    end
+
+    it "if the game ended as tie more than a minute ago, it shows the result in the past tense" do
+      almost_tie.process_new_move("challenged", 9)
+      two_min_ago = Time.now - 120
+      almost_tie.update!(updated_at: two_min_ago)
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      expect(almost_tie.render).to match("The last game was a tie at #{two_min_ago_s}")
+    end
+
+    it "if the game was completed more than a minute ago, it shows the result in the past tense" do
+      empty_board.abandon
+      two_min_ago = Time.now - 120
+      empty_board.update!(updated_at: two_min_ago)
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      expect(empty_board.render).to match("The last game was abandoned at #{two_min_ago_s}")
+    end
+
   end
 
   describe "::find_most_recent_game" do

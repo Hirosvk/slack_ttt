@@ -14,7 +14,7 @@ require 'rails_helper'
 
 RSpec.describe Challenge, type: :model do
   subject(:challenge){Challenge.new(challenger: "Sally", challenged: "Aki", channel_id: "12345")}
-  let(:another_challenge){Challenge.new(challenger: "Pranav", challenged: "Aki", channel_id: "12345")}
+  let(:another_challenge){Challenge.new(challenger: "Pranav", challenged: "Sulu", channel_id: "12345")}
   let(:Board){double("class_Board")}
   let(:game_board){instance_double("Board", status: "IP")}
 

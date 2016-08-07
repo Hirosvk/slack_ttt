@@ -50,7 +50,10 @@ private
   end
 
   def pending_challenges?
-    challenge = self.class.find_challenge(self.challenged, self.channel_id)
+    one_min_ago = Time.now - 60
+    challenge = self.class.where("channel_id = ?
+                        AND created_at >= ?",
+                        self.channel_id, one_min_ago).first
     if challenge && self.id != challenge.id
       errors[:resp] << "You cannot start a new game while there is a pending challenge"
     end

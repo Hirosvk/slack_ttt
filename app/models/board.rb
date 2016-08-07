@@ -20,7 +20,7 @@ end
 
 class Board < ActiveRecord::Base
   validate :check_players, :other_game_IP?
-  validates :x, :o, :channel_id, :current_mark, :grid, presence: true
+  validates :x, :o, :channel_id, :current_mark, :grid, :message, presence: true
   validates :status, inclusion: ["IP", "C"]
   after_initialize :set_initial_state
 
@@ -60,8 +60,21 @@ class Board < ActiveRecord::Base
       separator = "\n" if (i+1)%3 == 0
       result += game_grid[i] + separator
     end
-    msg = self.message
-    result += msg if msg
+
+    if self.status == "C" && self.updated_at <= (Time.now - 60)
+      winner = winner?
+      completed_at = self.updated_at.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      if filled? && !winner # tie
+        result += "The last game was a tie at #{completed_at}"
+      elsif winner
+        winner_name = self.send(winner)
+        result += "The last game was won by #{winner_name} at #{completed_at}"
+      else #game was abandoned
+        result += "The last game was abandoned at #{completed_at}"
+      end
+    else
+      result += self.message
+    end
     result
   end
 
