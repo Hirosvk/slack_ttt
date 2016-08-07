@@ -2,10 +2,10 @@
 * write Jasmine test for app's API endpoints
 * write Rails code
 * test w/o auth_token
+* test w/ auth_token
 
 ## 2. push to heroku / run the app in production (0.5 day)
 * take care of gems, etc... before pushing to heroku
-* test w/ auth_token
 * get SSL key
 * set up SSL on heroku
 

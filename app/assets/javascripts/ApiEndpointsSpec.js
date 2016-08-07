@@ -27,10 +27,7 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("starts the game with opponent's username as parameter, and asks the opponent's consent", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, done);
+        challenge("Steve", "Silly", done);
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("Steve challenges Silly");
@@ -40,16 +37,9 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("if the challenged player accepts the game, it returns the empty gameboard", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, function(){
-          let acceptContent = Object.assign({}, defaultContent);
-          acceptContent.command = "/accept";
-          acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, done);
+        challenge("Steve", "Silly", function(){
+          accept("Silly", done);
         });
-
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("This is a new game! It's Silly's turn(X)");
@@ -63,18 +53,9 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("allows only one challenge per channel at a time", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall);
-
-        function secondCall(){
-          let secondContent = Object.assign({}, defaultContent)
-          secondContent.user_name = "Jesse";
-          secondContent.command = "/challenge";
-          secondContent.text = "Mateo";
-          makeAjaxCall(secondContent, done);
-        };
+        challenge("Steve", "Silly", function(){
+          challenge("Jesse", "Mateo", done);
+        });
       });
 
       it("spec", function(done){
@@ -98,25 +79,9 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("returns error msg if a game is alreayd taking place in the channel", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall);
-
-        function secondCall(){
-          let acceptContent = Object.assign({}, defaultContent);
-          acceptContent.command = "/accept";
-          acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, thirdCall);
-        };
-
-        function thirdCall(){
-          let thirdContent = Object.assign({}, defaultContent);
-          thirdContent.user_name = "Hiro";
-          thirdContent.command = "/challenge";
-          thirdContent.text = "Dan";
-          makeAjaxCall(thirdContent, done);
-        };
+        challenge("Steve", "Silly", secondCall);
+        function secondCall(){ accept("Silly", thirdCall); };
+        function thirdCall(){ challenge("Hiro", "Dan", done); };
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("You need to challenge another player");
@@ -126,17 +91,8 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("handles multiple games taking place in different channels", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, secondCall);
-
-        function secondCall(){
-          let acceptContent = Object.assign({}, defaultContent);
-          acceptContent.command = "/accept";
-          acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, thirdCall);
-        };
+        challenge("Steve", "Silly", secondCall);
+        function secondCall(){ accept("Silly", thirdCall); };
 
         function thirdCall(){
           let thirdContent = Object.assign({}, defaultContent);
@@ -167,9 +123,7 @@ describe("Tic-Tac-Toe Game", function(){
   describe("/accept", function(){
     describe("when there is no challanges, it returns error msg", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/accept";
-        makeAjaxCall(defaultContent, done);
+        accept("Steve", done);
       });
 
       it("spec", function(done){
@@ -185,16 +139,9 @@ describe("Tic-Tac-Toe Game", function(){
   describe("/decline", function(){
     describe("returns the confirmation", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/challenge";
-        defaultContent.text = "Silly";
-        makeAjaxCall(defaultContent, function(){
-          let acceptContent = Object.assign({}, defaultContent);
-          acceptContent.command = "/decline";
-          acceptContent.user_name = "Silly";
-          makeAjaxCall(acceptContent, done);
+        challenge("Steve", "Silly", function(){
+          decline("Silly", done);
         });
-
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("You declined the chalenge from Steve");
@@ -204,9 +151,7 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("when there is no challanges, it returns error msg", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/decline";
-        makeAjaxCall(defaultContent, done);
+        decline("Steve", done);
       });
 
       it("spec", function(done){
@@ -217,26 +162,11 @@ describe("Tic-Tac-Toe Game", function(){
   });
 
   describe("/mark [position]", function(){
-    beforeEach(function(){
-      defaultContent.user_name = "Steve";
-      defaultContent.command = "/challenge";
-      defaultContent.text = "Silly";
-      makeAjaxCall(defaultContent, secondCall);
-
-      function secondCall(){
-        let acceptContent = Object.assign({}, defaultContent);
-        acceptContent.command = "/accept";
-        acceptContent.user_name = "Silly";
-        makeAjaxCall(acceptContent);
-      };
-    })
+    beforeEach(setupGame());
 
     describe("takes the position and returns the updated board", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Silly";
-        defaultContent.command = "/mark";
-        defaultContent.text = "1";
-        makeAjaxCall(defaultContent, done);
+        markBoard("Silly", "1", done);
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("X-2-3\n4-5-6\n7-8-9\nIt's Steve's turn(O)");
@@ -246,10 +176,7 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("returns error msg to the moves not by the wrong player", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Steve";
-        defaultContent.command = "/mark";
-        defaultContent.text = "1";
-        makeAjaxCall(defaultContent, done);
+        markBoard("Steve", "1", done);
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("It's not your turn!");
@@ -257,12 +184,9 @@ describe("Tic-Tac-Toe Game", function(){
       });
     });
 
-    describe("returns error msg to the moves by audience", function(){
+    describe("returns error msg to the moves by non-player", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Daniel";
-        defaultContent.command = "/mark";
-        defaultContent.text = "1";
-        makeAjaxCall(defaultContent, done);
+        markBoard("Daniel", "1", done);
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("You are not playing this game");
@@ -272,18 +196,9 @@ describe("Tic-Tac-Toe Game", function(){
 
     describe("returns error msg if the place has been marked already", function(){
       beforeEach(function(done){
-        defaultContent.user_name = "Silly";
-        defaultContent.command = "/mark";
-        defaultContent.text = "1";
-        makeAjaxCall(defaultContent, secondCall);
-
-        function secondCall(){
-          let secondContent = Object.assign({}, defaultContent);
-          secondContent.user_name = "Steve";
-          secondContent.command = "/mark";
-          secondContent.text = "1";
-          makeAjaxCall(secondContent, done)
-        }
+        markBoard("Silly", "1", function(){
+          markBoard("Steve", "1", done);
+        });
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("That space is already marked");
@@ -296,14 +211,48 @@ describe("Tic-Tac-Toe Game", function(){
     it("when there is no game in progress, it returns error msg");
   });
 
-  describe("/show_board", function(){
-    it("returns the board of the game in progress");
-    it("if no game is in progress, it returns the most recent game board and results");
-  });
 
   describe("/abandon", function(){
-    it("Either of the players can abandon the game");
-    it("returns error message if you are not a player");
+    beforeEach(setupGame());
+    describe("Either of the players can abandon the game", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Steve";
+        defaultContent.command = "/abandon";
+        makeAjaxCall(defaultContent, done);
+      });
+
+      it("Steve abandons", function(done){
+        expect(responseContent().text).toMatch("Steve abandoned the game");
+        done();
+      });
+    });
+
+    describe("Either of the players can abandon the game", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Silly";
+        defaultContent.command = "/abandon";
+        makeAjaxCall(defaultContent, done);
+      });
+
+      it("Silly abandons", function(done){
+        expect(responseContent().text).toMatch("Silly abandoned the game");
+        done();
+      });
+    });
+
+
+    describe("returns error message if you are not a player", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Maria";
+        defaultContent.command = "/abandon";
+        makeAjaxCall(defaultContent, done);
+      });
+
+      it("Silly abandons", function(done){
+        expect(responseContent().text).toMatch("Only the current players can abandon");
+        done();
+      });
+    });
 
     // Buttons
     it("lets users choose yes/no with buttons");
@@ -311,6 +260,23 @@ describe("Tic-Tac-Toe Game", function(){
     // API & Event Listener
     it("when the player logs out the game is automatically abandoned");
   });
+
+  describe("/show_board", function(){
+    beforeEach(setupGame());
+    describe("returns the board of the game in progress", function(){
+      beforeEach(function(done){
+        defaultContent.user_name = "Halal";
+        defaultContent.command = "/show_board";
+        makeAjaxCall(defaultContent, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("1-2-3\n4-5-6\n7-8-9\nIt's Silly's turn(X)")
+        done();
+      });
+    });
+    it("if no game is in progress, it returns the most recent game board and results");
+  });
+
 
   describe("/help", function(){
     it("returns the instruction of the game");
@@ -320,7 +286,61 @@ describe("Tic-Tac-Toe Game", function(){
     it("provides the recent games' results");
   });
 
+
 // helper functions
+  function setupGame(){
+    defaultContent.user_name = "Steve";
+    defaultContent.command = "/challenge";
+    defaultContent.text = "Silly";
+    makeAjaxCall(defaultContent, secondCall);
+
+    function secondCall(){
+      let acceptContent = Object.assign({}, defaultContent);
+      acceptContent.command = "/accept";
+      acceptContent.user_name = "Silly";
+      makeAjaxCall(acceptContent);
+    }
+  }
+
+  function markBoard(player, position, callback){
+    let content = Object.assign({}, defaultContent);
+    content.user_name = player;
+    content.text = position;
+    content.command = "/mark";
+    makeAjaxCall(content, callback);
+  }
+
+  function accept(player, callback){
+    let content = Object.assign({}, defaultContent);
+    content.user_name = player;
+    content.command = "/accept";
+    makeAjaxCall(content, callback);
+  }
+
+  function decline(player, callback){
+    let content = Object.assign({}, defaultContent);
+    content.user_name = player;
+    content.command = "/decline";
+    makeAjaxCall(defaultContent, callback);
+  }
+
+  function challenge(challenger, challenged, callback){
+    let content = Object.assign({}, defaultContent);
+    content.user_name = challenger;
+    content.command = "/challenge";
+    content.text = challenged;
+    makeAjaxCall(content, callback);
+  }
+
+  // function setupNearWinGame(){
+  //   setupGame();
+  //
+  // }
+  // board.process_new_move("challenged", 1)
+  // board.process_new_move("starter", 4)
+  // board.process_new_move("challenged", 5)
+  // board.process_new_move("starter", 7)
+
   function makeAjaxCall(content, successCallback){
     let request = new XMLHttpRequest();
     request.open("POST", `http://localhost:3000/api/games${content.command}`, true);

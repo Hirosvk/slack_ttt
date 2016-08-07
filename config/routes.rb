@@ -1,8 +1,14 @@
 Rails.application.routes.draw do
   namespace :api do
-    get 'games/spec' => 'games#spec'
     post 'games/challenge' => 'games#challenge'
     post 'games/accept' => 'games#accept'
+    post 'games/abandon' => 'games#abandon'
+    post 'games/mark' => 'games#mark'
+    post 'games/decline' => 'games#decline'
+    post 'games/show_board' => 'games#show_board'
+    post 'games/help' => 'games#help'
+
+    get 'games/spec' => 'games#spec'
     post 'games/destroy_all' => 'games#destroy_all'
   end
   # The priority is based upon order of creation: first created -> highest priority.

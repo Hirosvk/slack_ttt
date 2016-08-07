@@ -1,8 +1,5 @@
 class Api::GamesController < ApplicationController
 
-  def spec
-    render "spec_runner.html"
-  end
 
   def challenge
     @challenge = Challenge.new(challenger: params[:user_name],
@@ -21,6 +18,27 @@ class Api::GamesController < ApplicationController
 
   def accept
     render json: {text: params[:user_name]}
+  end
+
+  def decilne
+  end
+
+  def mark
+  end
+
+  def show_board
+
+  end
+
+  def help
+  end
+
+  def abandon
+  end
+
+## development purpose only ##
+  def spec
+    render "spec_runner.html"
   end
 
   def destroy_all
