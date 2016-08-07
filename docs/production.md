@@ -18,6 +18,7 @@
 * improve UI / Error messages and instructions
 * setup Interactive Buttons & Slack API
 * documentation
+* clean up Git files
 * refactor => create concerns
 
 ## 5. more extra feature
