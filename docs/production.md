@@ -15,8 +15,10 @@
 
 ## 4. extra feature (1.5 day)
 * change Board#render to output code block version of the board
+* improve UI / Error messages and instructions
 * setup Interactive Buttons & Slack API
 * documentation
+* refactor => create concerns
 
 ## 5. more extra feature
 * add visual effects (emoji, pics, etc...)

@@ -64,6 +64,12 @@ GEM
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
+    jasmine (2.4.0)
+      jasmine-core (~> 2.4)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.4.1)
     jbuilder (2.6.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
@@ -87,6 +93,7 @@ GEM
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
     pg (0.18.4)
+    phantomjs (2.1.1.0)
     pkg-config (1.1.7)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -182,6 +189,7 @@ DEPENDENCIES
   binding_of_caller
   byebug
   coffee-rails (~> 4.1.0)
+  jasmine
   jbuilder (~> 2.0)
   jquery-rails
   pg (~> 0.15)

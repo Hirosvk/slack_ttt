@@ -60,18 +60,18 @@ describe Board do
 
     it "raises error when a player's name is missing" do
       new_board = Board.new(o: "starter", x: "", channel_id: "12345")
-      expect{new_board.save!}.to raise_error(/\s*You need to challenge another player\s*/)
+      expect{new_board.save!}.to raise_error(/.*You need to challenge another player.*/)
     end
 
     it "raises error when players names are the same" do
       new_board = Board.new(o: "starter", x: "starter", channel_id: "12345")
-      expect{new_board.save!}.to raise_error(/\s*You can't challenge yourself!\s*/)
+      expect{new_board.save!}.to raise_error(/.*You can't challenge yourself!.*/)
     end
 
     it "does not allow more than one game per channel at a time" do
       board1 = Board.create(o: "starter", x: "challenged", channel_id: "12345")
       board2 = Board.new(o: "player3", x: "player4", channel_id: "12345")
-      expect{board2.save!}.to raise_error(/\s*Only one game can take place per channel\s*/)
+      expect{board2.save!}.to raise_error(/.*Only one game can take place per channel.*/)
     end
 
     it "allows new game for the channel as long as the past games are completed" do

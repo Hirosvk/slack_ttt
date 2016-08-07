@@ -138,7 +138,7 @@ private
   def check_players
     if self.x == self.o
       errors[:resp] << "You can't challenge yourself!"
-    elsif self.x.length < 1
+    elsif self.x.nil? || self.x.length < 1
       errors[:resp] << "You need to challenge another player"
     end
   end

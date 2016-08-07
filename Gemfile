@@ -38,6 +38,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'annotate'
   gem 'rspec-rails'
+  gem 'jasmine'
 end
 
 group :development do
