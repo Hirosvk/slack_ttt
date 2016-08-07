@@ -14,3 +14,6 @@
 
 # Ignore test folder
 /test
+
+/jasmine-2.4.1
+ApiEndpointSpec.js
