@@ -93,7 +93,7 @@ class Api::GamesController < ApplicationController
 
 ## development purpose only ##
   def spec
-    render "spec_runner.html"
+    render :spec_runner
   end
 
   def destroy_all
