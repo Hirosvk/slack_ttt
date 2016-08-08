@@ -18,6 +18,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.slack_api
-    self.find_by_purpose("slack_api").token
+    cert = self.find_by_purpose("slack_api")
+    cert.try(:token)
   end
 end
