@@ -2,9 +2,9 @@ class Api::GamesController < ApplicationController
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*'
+    # headers['Access-Control-Allow-Origin'] = 'http://api.rubyonrails.org'
+    headers['Access-Control-Allow-Origin'] = 'http://www.google.com'
     headers['Access-Control-Allow-Methods'] = 'POST, GET'
-    puts headers
   end
 
   DEFAULT_RESP = {
