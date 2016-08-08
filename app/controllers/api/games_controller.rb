@@ -137,6 +137,24 @@ class Api::GamesController < ApplicationController
     render resp
   end
 
+  def check
+    resp = dup(DEFAULT_RESP)
+
+    team_user_status = get_team_user_status
+    game = Board.find_most_recent_game(params[:channel_id])
+
+    x_active? = team_user_status[game.x] == "active"
+    o_active? = team_user_status[game.o] == "active"
+    if x_active? && o_active?
+      resp[:json][:text] = "Everything looks fine"
+    else
+      resp[:json][:text] = "Looks like players have left the Slack channel! This game is now abandoned"
+      resp[:json][:response_type] = "in_channel"
+      game.abandon
+    end
+    render resp
+  end
+
   def respond_ok
     render status: 200, json: "Hi Slack people!"
   end
@@ -173,7 +191,7 @@ private
     end
     members = raw_resp.parse["members"]
     if raw_resp.code != 200 || !members.is_a?(Array)
-      return "connection error"
+      return "Connection error: unable to verify the active users"
     else
       active_members = members.inject({}) do |accum, member|
         accum[member["name"]] = member["presence"]
