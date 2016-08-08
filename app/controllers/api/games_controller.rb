@@ -19,15 +19,28 @@ class Api::GamesController < ApplicationController
   def challenge
     challenger = params[:user_name]
     challenged = params[:text].gsub(/\s+.*/, "")
-    @challenge = Challenge.new(challenger: challenger,
-                               challenged: challenged,
-                               channel_id: params[:channel_id])
+
     resp = dup(DEFAULT_RESP)
-    if @challenge.save
-      resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with `/accept` or `/decline`)"
-      resp[:json][:response_type] = "in_channel"
+    team_user_status = get_team_user_status
+    # debugger
+    if !team_user_status.is_a?(Hash)
+      resp[:json][:text] = team_user_status
+    elsif team_user_status.keys.include?(challenged)
+      if team_user_status[challenged] == "active"
+        @challenge = Challenge.new(challenger: challenger,
+                                   challenged: challenged,
+                                   channel_id: params[:channel_id])
+        if @challenge.save
+          resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with `/accept` or `/decline`)"
+          resp[:json][:response_type] = "in_channel"
+        else
+          resp[:json][:text] = @challenge.errors[:resp].join(", ")
+        end
+      else
+        resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
+      end
     else
-      resp[:json][:text] = @challenge.errors[:resp].join(", ")
+      resp[:json][:text] = "#{challenged} is not a member of the team"
     end
     render resp
   end
@@ -151,9 +164,11 @@ private
     end
   end
 
-  def team_user_status
+  def get_team_user_status
+    # debugger
+    api_path = File.read(Rails.root + "app/controllers/api/api_path.txt").gsub("\n", "")
     begin
-      raw_resp = HTTP.get("https://slack.com/api/users.list?token=xoxp-66138517061-66148393778-67329536503-6fe10c6f55&presence=1&pretty=1")
+      raw_resp = HTTP.get(api_path)
     rescue HTTP::Error => e
       return e.message
     end
