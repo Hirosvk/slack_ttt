@@ -89,11 +89,12 @@ class Api::GamesController < ApplicationController
   end
 
   def how
+    puts "here is the origin"
+    puts request.headers.env["HTTP_ORIGIN"]
     instructions =
-    "
-    How to play a game of Tic-Tac-Toe:\n
+    "How to play a game of Tic-Tac-Toe:\n
     1. Start by challeging another user by typing ```/challenge [username]```\n
-    2. If another user accepts the challenge by typing ```/accept```, the new game will begin!\n
+    2. The new game will begin when another user accepts the challenge by typing ```/accept```\n
     3. Place your mark with the command ```/mark [position number]```.\n
     (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)\n
     "
