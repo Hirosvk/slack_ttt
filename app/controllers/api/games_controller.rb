@@ -108,6 +108,10 @@ class Api::GamesController < ApplicationController
     render resp
   end
 
+  def respond_ok
+    render status: 200, json: "Hi Slack people!"
+  end
+
 ## development purpose only ##
   def spec
     render :spec_runner

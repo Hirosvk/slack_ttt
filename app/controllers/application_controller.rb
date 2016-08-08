@@ -18,8 +18,5 @@ class ApplicationController < ActionController::Base
     "yJgkg2ct70GaiZlAaEoLDSoc"  # /how
   ]
 
-  def respond_ok
-    render status: 200, json: "Hi Slack people!"
-  end
 
 end
