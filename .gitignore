@@ -15,4 +15,4 @@
 # Ignore test folder
 /test
 
-api_path.txt
+token_seeds.rb

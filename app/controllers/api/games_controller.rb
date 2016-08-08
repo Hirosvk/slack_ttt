@@ -22,7 +22,6 @@ class Api::GamesController < ApplicationController
 
     resp = dup(DEFAULT_RESP)
     team_user_status = get_team_user_status
-    # debugger
     if !team_user_status.is_a?(Hash)
       resp[:json][:text] = team_user_status
     elsif team_user_status.keys.include?(challenged)
@@ -165,8 +164,8 @@ private
   end
 
   def get_team_user_status
-    # debugger
-    api_path = File.read(Rails.root + "app/controllers/api/api_path.txt").gsub("\n", "")
+    token = Certificate.slack_api
+    api_path = "https://slack.com/api/users.list?token=#{token}&presence=1&pretty=1"
     begin
       raw_resp = HTTP.get(api_path)
     rescue HTTP::Error => e
