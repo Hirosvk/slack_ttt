@@ -2,7 +2,7 @@ class Api::GamesController < ApplicationController
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Origin'] = '*google.com'
     headers['Access-Control-Allow-Methods'] = 'POST, GET'
     headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type}.join(',')
   end
@@ -37,6 +37,7 @@ class Api::GamesController < ApplicationController
         else
           resp[:json][:text] = @challenge.errors[:resp].join(", ")
         end
+      elsif challenged == "slackbot"
         resp[:json][:text] = "Slackbot cannot accept the challenge"
       else
         resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
