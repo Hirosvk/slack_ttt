@@ -31,18 +31,13 @@
 - [ ] remove test token
 - [ ] documentation
 
+## 5. UI
+- [ ] add dropdown instructions
+
 ## 5. more extra feature
 - [x] change Board#render to output code block version of the board -> message as attachment
 - [x] improve UI / Error messages
-- [ ] setup Interactive Buttons & Slack API
+- [x] setup Slack API
+
 - [ ] add visual effects (emoji, pics, etc...)
 - [ ] create a bot
-- [ ] clean up old challenges
-- [ ] user entering unnecessary data
-
-
-## API notes
-* user challenges
-* get user list (users.list) with option=1(presence info)
-* find the status of the challenged user
-* display the challenge message

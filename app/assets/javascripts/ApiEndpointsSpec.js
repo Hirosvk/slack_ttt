@@ -18,11 +18,6 @@ describe("Tic-Tac-Toe Game", function(){
     responseContent(false);
   });
 
-  // afterEach(function(){
-  //   defaultContent.command = "/destroy_all"
-  //   makeAjaxCall(defaultContent);
-  // });
-
   describe("/challenge [opponent's username]", function(){
 
     describe("starts the game with opponent's username, and asks the opponent's consent", function(){

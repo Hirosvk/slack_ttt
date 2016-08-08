@@ -38,7 +38,7 @@ class Board < ActiveRecord::Base
 
   def process_new_move(player, position)
     if self.status == "C"
-      raise TTTError.new("This game has already been completed or abandoned")
+      raise TTTError.new("The game has been completed or abandoned")
     end
 
     if !(1..9).to_a.include?(position)

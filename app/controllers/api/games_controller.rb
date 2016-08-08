@@ -22,8 +22,10 @@ class Api::GamesController < ApplicationController
 
     resp = dup(DEFAULT_RESP)
     team_user_status = get_team_user_status
+
     if !team_user_status.is_a?(Hash)
       resp[:json][:text] = team_user_status
+
     elsif team_user_status.keys.include?(challenged)
       if team_user_status[challenged] == "active"
         @challenge = Challenge.new(challenger: challenger,
@@ -35,6 +37,7 @@ class Api::GamesController < ApplicationController
         else
           resp[:json][:text] = @challenge.errors[:resp].join(", ")
         end
+        resp[:json][:text] = "Slackbot cannot accept the challenge"
       else
         resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
       end
@@ -113,7 +116,7 @@ class Api::GamesController < ApplicationController
     2. The game will begin when the other user accepts your challenge\n
     3. On your turn, place your mark with `/mark [position number]`.\n
     4. You can abandon the game any time with `/abandon`\n
-    (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)\n
+    (See this repo https://github.com/Hirosvk/slack_ttt for more info about the game)\n
     "
     resp = dup(DEFAULT_RESP)
     resp[:json][:text] = instructions
