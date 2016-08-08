@@ -3,7 +3,7 @@ class Api::GamesController < ApplicationController
 
   def cors_set_access_control_headers
     # headers['Access-Control-Allow-Origin'] = 'http://api.rubyonrails.org'
-    headers['Access-Control-Allow-Origin'] = 'http://www.google.com'
+    headers['Access-Control-Allow-Origin'] = 'https://www.google.com'
     headers['Access-Control-Allow-Methods'] = 'POST, GET'
   end
 
