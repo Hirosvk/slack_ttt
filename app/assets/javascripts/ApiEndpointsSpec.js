@@ -454,7 +454,7 @@ describe("Tic-Tac-Toe Game", function(){
 
   function makeAjaxCall(content, successCallback){
     let request = new XMLHttpRequest();
-    request.open("POST", `https://hiro-slack-ttt.herokuapp.com${content.command}`, true);
+    request.open("POST", `https://localhost:3000/api/games${content.command}`, true);
     request.onload = function(resp){
       if (request.status === 200){
         responseContent(JSON.parse(request.responseText));
