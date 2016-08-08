@@ -1,11 +1,11 @@
 class Api::GamesController < ApplicationController
-  after_filter :cors_set_access_control_headers
-
-  def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = 'https://www.google.com'
-    headers['Access-Control-Allow-Methods'] = 'POST, GET'
-    headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type}.join(',')
-  end
+  # after_filter :cors_set_access_control_headers
+  #
+  # def cors_set_access_control_headers
+  #   headers['Access-Control-Allow-Origin'] = 'https://www.google.com'
+  #   headers['Access-Control-Allow-Methods'] = 'POST, GET'
+  #   headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type}.join(',')
+  # end
 
   DEFAULT_RESP = {
     status: 200,
