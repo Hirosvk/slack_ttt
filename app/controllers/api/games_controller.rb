@@ -15,12 +15,14 @@ class Api::GamesController < ApplicationController
     content_type: "application/json",
     json: {
       response_type: "ephemeral",
-      text: nil,
-      attachments: [{
-        mrkdwn_in: ["text"]
-      }]
+      text: nil
     }
   }
+
+  DEFAULT_ATTACHMENT = [{
+      text: nil,
+      mrkdwn_in: ["text"]
+  }]
 
   def challenge
     challenger = params[:user_name]
@@ -65,7 +67,7 @@ class Api::GamesController < ApplicationController
       @board = @challenge.create_new_game
       if @board.save!
         resp[:json][:text] = @board.render
-        resp[:json][:attachments][0][:text] = @board.render_message
+        resp[:json][:attachments] = attachment_text(@board.render_message)
         resp[:json][:response_type] = "in_channel"
       else
         resp[:json][:text] = @board.errors[:resp].join(",")
@@ -96,7 +98,7 @@ class Api::GamesController < ApplicationController
       else
         @board.process_new_move(params[:user_name], params[:text].to_i)
         resp[:json][:text] = @board.render
-        resp[:json][:attachments][0][:text] = @board.render_message
+        resp[:json][:attachments] = attachment_text(@board.render_message)
         resp[:json][:response_type] = "in_channel"
       end
     rescue TTTError => e
@@ -110,7 +112,7 @@ class Api::GamesController < ApplicationController
     resp = dup(DEFAULT_RESP)
     if @board
       resp[:json][:text] = @board.render
-      resp[:json][:attachments][0][:text] = @board.render_message
+      resp[:json][:attachments] = attachment_text(@board.render_message)
     else
       resp[:json][:text] = "No game has taken place yet."
     end
@@ -195,6 +197,12 @@ private
       accum[k] = v.is_a?(Hash) ? dup(v) : v
       accum
     end
+  end
+
+  def attachment_text(str)
+    attachment = dup(DEFAULT_ATTACHMENT[0])
+    attachment[:text] = str
+    [attachment]
   end
 
   def get_team_user_status
