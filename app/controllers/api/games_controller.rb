@@ -97,7 +97,9 @@ class Api::GamesController < ApplicationController
     3. Place your mark with the command ```/mark [position number]```.
     (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)
     """
-    render [:json][:text] = instructions
+    resp = dup(DEFAULT_RESP)
+    resp[:json][:text] = instructions
+    render resp
   end
 
   def abandon

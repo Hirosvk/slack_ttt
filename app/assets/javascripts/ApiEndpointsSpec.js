@@ -426,7 +426,18 @@ describe("Tic-Tac-Toe Game", function(){
 
 
   describe("/how", function(){
-    it("returns the instruction of the game");
+    describe("returns the instruction of the game",function(){
+      beforeEach(function(done){
+        let content = Object.assign({}, defaultContent);
+        content.user_name = "Jamal";
+        content.command = "/how";
+        makeAjaxCall(content, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("How to play");
+        done();
+      })
+    });
   });
 
   describe("handles GET request from Slack", function(){
