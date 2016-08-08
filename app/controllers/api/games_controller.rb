@@ -17,11 +17,10 @@ class Api::GamesController < ApplicationController
   }
 
   def challenge
-    @challenge = Challenge.new(challenger: params[:user_name],
+    @challenge = Challenge.new(challenger: params[:user_name].gsub(/\s+.*/, ""),
                                challenged: params[:text],
                                channel_id: params[:channel_id])
     resp = dup(DEFAULT_RESP)
-    # debugger if params[:user_name] == "Jesse"
     if @challenge.save
       resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with '/accept' or '/decline')"
       resp[:json][:response_type] = "in_channel"

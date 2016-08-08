@@ -119,6 +119,11 @@ describe Board do
       expect{ empty_board.process_new_move("starter", 1) }.to raise_error(TTTError, "That space is already marked")
     end
 
+    it "raises error if position is not between 1 and 9" do
+      expect{ empty_board.process_new_move("challenged", 0) }.to raise_error(TTTError, "Please enter valid a positions(between 1 and 9)")
+      expect{ empty_board.process_new_move("challenged", 10) }.to raise_error(TTTError, "Please enter valid a positions(between 1 and 9)")
+    end
+
     it "no winner until the game is won" do
       expect(almost_win.status).to eq("IP")
       expect(almost_win.winner).to eq(nil)
@@ -199,7 +204,7 @@ describe Board do
       empty_board.abandon
       game = Board.find_most_recent_game("00000")
       expect(game.id).to eq(empty_board.id)
-      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\n*This game has been abandoned*")
+      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\n*This game was abandoned*")
     end
 
     it "returns the most recent one if there are multiple archived games" do

@@ -41,7 +41,9 @@ class Board < ActiveRecord::Base
       raise TTTError.new("This game has already been completed or abandoned")
     end
 
-    if player == next_player
+    if !(1..9).to_a.include?(position)
+      raise TTTError.new("Please enter valid a positions(between 1 and 9)")
+    elsif player == next_player
       raise TTTError.new("It's not your turn!")
     elsif player != current_player
       raise TTTError.new("You are not playing this game")

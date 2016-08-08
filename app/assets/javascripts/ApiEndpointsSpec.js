@@ -82,20 +82,19 @@ describe("Tic-Tac-Toe Game", function(){
       it("spec", function(done){
         expect(responseContent().text).toMatch("You need to challenge another player");
         expect(responseContent().response_type).toEqual("ephemeral");
-        console.log(responseContent());
         done();
       });
     });
 
-    describe("returns error msg if there are multiple usernames", function(){
+    describe("takes the first usrename if there are multiple usernames", function(){
       beforeEach(function(done){
         challenge("Lola", "nasley seiji silvie", reset)
         function reset(){ resetCall(done) }
       });
 
       it("spec", function(done){
-        expect(responseContent().text).toMatch("Please only enter one user name without space");
-        expect(responseContent().response_type).toEqual("ephemeral");
+        expect(responseContent().text).toMatch("Lola challenges nasley");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -230,7 +229,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec - 0", function(done){
-        expect(responseContent().text).toMatch("Please enter valid a positions.");
+        expect(responseContent().text).toMatch("Please enter valid a positions");
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
@@ -244,7 +243,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec - 20", function(done){
-        expect(responseContent().text).toMatch("Please enter valid a positions.");
+        expect(responseContent().text).toMatch("Please enter valid a positions");
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
@@ -258,7 +257,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec - 'Milly'", function(done){
-        expect(responseContent().text).toMatch("Please enter valid a positions.");
+        expect(responseContent().text).toMatch("Please enter valid a positions");
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
@@ -428,6 +427,28 @@ describe("Tic-Tac-Toe Game", function(){
 
   describe("/how", function(){
     it("returns the instruction of the game");
+  });
+
+  describe("handles GET request from Slack", function(){
+    describe("return status 200 for GET request", function(){
+      beforeEach(function(done){
+        function _makeAjaxCall(callback){
+          let request = new XMLHttpRequest();
+          request.open("GET", window.path, true);
+          request.onload = function(resp){
+            responseContent(resp.target);
+            if (callback) { callback(); }
+          }
+          request.send();
+        };
+        _makeAjaxCall(done)
+      });
+      it("spec", function(done){
+        expect(responseContent().status).toEqual(200)
+        console.log(responseContent());
+        done();
+      });
+    });
   });
 
   // describe("/record", function(){

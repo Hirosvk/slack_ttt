@@ -17,8 +17,6 @@
 * ephemeral / in-channel response
 
 * user entering multiple usernames
-* user not entering names with challenges --> who does Bot respond?
-* user entering unnecessary data
 * user entering number besides 1-9
 
 * change Board#render to output code block version of the board
@@ -41,3 +39,4 @@
 * add visual effects (emoji, pics, etc...)
 * create a bot
 * clean up old challenges
+* user entering unnecessary data
