@@ -440,6 +440,21 @@ describe("Tic-Tac-Toe Game", function(){
     });
   });
 
+  describe("/check", function(){
+    describe("returns erro if there is no game",function(){
+      beforeEach(function(done){
+        let content = Object.assign({}, defaultContent);
+        content.user_name = "Jamal";
+        content.command = "/check";
+        makeAjaxCall(content, done);
+      });
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("no game is taking place");
+        done();
+      })
+    });
+  });
+
   describe("handles GET request from Slack", function(){
     describe("return status 200 for GET request", function(){
       beforeEach(function(done){

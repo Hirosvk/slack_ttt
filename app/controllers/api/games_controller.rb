@@ -143,14 +143,18 @@ class Api::GamesController < ApplicationController
     team_user_status = get_team_user_status
     game = Board.find_most_recent_game(params[:channel_id])
 
-    x_active? = team_user_status[game.x] == "active"
-    o_active? = team_user_status[game.o] == "active"
-    if x_active? && o_active?
-      resp[:json][:text] = "Everything looks fine"
+    if game && game.status == "IP"
+      x_active = team_user_status[game.x] == "active"
+      o_active = team_user_status[game.o] == "active"
+      if x_active && o_active
+        resp[:json][:text] = "Everything looks fine"
+      else
+        resp[:json][:text] = "Looks like players have left the Slack channel! This game is now abandoned"
+        resp[:json][:response_type] = "in_channel"
+        game.abandon
+      end
     else
-      resp[:json][:text] = "Looks like players have left the Slack channel! This game is now abandoned"
-      resp[:json][:response_type] = "in_channel"
-      game.abandon
+      resp[:json][:text] = "no game is taking place"
     end
     render resp
   end
