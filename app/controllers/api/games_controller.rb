@@ -90,13 +90,13 @@ class Api::GamesController < ApplicationController
 
   def how
     instructions =
-    """
-    How to play a game of Tic-Tac-Toe:
-    1. Start by challeging another user by typing ```/challenge [username]```
-    2. If another user accepts the challenge by typing ```/accept```, the new game will begin!
-    3. Place your mark with the command ```/mark [position number]```.
-    (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)
-    """
+    "
+    How to play a game of Tic-Tac-Toe:\n
+    1. Start by challeging another user by typing ```/challenge [username]```\n
+    2. If another user accepts the challenge by typing ```/accept```, the new game will begin!\n
+    3. Place your mark with the command ```/mark [position number]```.\n
+    (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)\n
+    "
     resp = dup(DEFAULT_RESP)
     resp[:json][:text] = instructions
     render resp
