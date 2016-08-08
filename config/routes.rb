@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     post 'games/decline' => 'games#decline'
     post 'games/show_board' => 'games#show_board'
     post 'games/how' => 'games#how'
+    post 'games/check' => 'games#check'
 
     ## Testing purpose only
     get 'games/spec' => 'games#spec'
