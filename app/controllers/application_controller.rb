@@ -8,7 +8,8 @@ class ApplicationController < ActionController::Base
   end
 
   SLACK_TOKENS = [
+    "gIkuvaNzQIHg97ATvDxqgjtO", # for testing
     "JMN4zMcOJJnJTpBiu4NNdtIr", # /show_board
-    "gIkuvaNzQIHg97ATvDxqgjtO" # for testing
+    "CmViLMXuqm56gq8rTDll6SvR"  # /challenge
   ]
 end
