@@ -1,3 +1,5 @@
+Rails.application.config.assets.precompile += %w( spec.js spec.css )
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 

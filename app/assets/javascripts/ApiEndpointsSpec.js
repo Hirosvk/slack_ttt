@@ -454,7 +454,7 @@ describe("Tic-Tac-Toe Game", function(){
 
   function makeAjaxCall(content, successCallback){
     let request = new XMLHttpRequest();
-    request.open("POST", `https://hiro-slack-ttt.herokuapp.com/api/games${content.command}`, true);
+    request.open("POST", window.path + content.command, true);
     request.onload = function(resp){
       if (request.status === 200){
         responseContent(JSON.parse(request.responseText));
@@ -471,7 +471,7 @@ describe("Tic-Tac-Toe Game", function(){
 
   function resetCall(callback){
     let request = new XMLHttpRequest();
-    request.open("POST", `http://localhost:3000/api/games/destroy_all`, true);
+    request.open("POST", window.path + "/destroy_all", true);
     request.onload = function(resp){
       if (request.status === 200){
         callback();
