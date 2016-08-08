@@ -2,7 +2,7 @@ class Api::GamesController < ApplicationController
   after_filter :cors_set_access_control_headers
 
   def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*slack.com'
+    headers['Access-Control-Allow-Origin'] = '*'
     headers['Access-Control-Allow-Methods'] = 'POST, GET'
     headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type}.join(',')
   end
@@ -92,11 +92,10 @@ class Api::GamesController < ApplicationController
     origin = request.headers.env["HTTP_ORIGIN"]
     instructions =
     "How to play a game of Tic-Tac-Toe:\n
-    1. Start by challeging another user by typing ```/challenge [username]```\n
-    2. The new game will begin when another user accepts the challenge by typing ```/accept```\n
-    3. Place your mark with the command ```/mark [position number]```.\n
+    1. Start by challeging another user by typing `/challenge [username]`\n
+    2. The new game will begin when the challenged user accepts the challenge by typing `/accept`\n
+    3. On your turn, place your mark with this command `/mark [position number]`.\n
     (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)\n
-    origin: #{origin}
     "
     resp = dup(DEFAULT_RESP)
     resp[:json][:text] = instructions

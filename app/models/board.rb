@@ -65,7 +65,7 @@ class Board < ActiveRecord::Base
 
     if self.status == "C" && self.updated_at <= (Time.now - 60)
       winner = winner?
-      completed_at = self.updated_at.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      completed_at = self.updated_at.localtime.strftime("%Y-%m-%d %H:%M")
       if filled? && !winner # tie
         result += "The last game was a tie at #{completed_at}"
       elsif winner

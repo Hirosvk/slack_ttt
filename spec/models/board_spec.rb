@@ -170,7 +170,7 @@ describe Board do
       almost_win.process_new_move("challenged", 9)
       two_min_ago = Time.now - 120
       almost_win.update!(updated_at: two_min_ago)
-      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
       expect(almost_win.render).to match("The last game was won by challenged at #{two_min_ago_s}")
     end
 
@@ -178,7 +178,7 @@ describe Board do
       almost_tie.process_new_move("challenged", 9)
       two_min_ago = Time.now - 120
       almost_tie.update!(updated_at: two_min_ago)
-      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
       expect(almost_tie.render).to match("The last game was a tie at #{two_min_ago_s}")
     end
 
@@ -186,7 +186,7 @@ describe Board do
       empty_board.abandon
       two_min_ago = Time.now - 120
       empty_board.update!(updated_at: two_min_ago)
-      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M:%S")
+      two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
       expect(empty_board.render).to match("The last game was abandoned at #{two_min_ago_s}")
     end
 
