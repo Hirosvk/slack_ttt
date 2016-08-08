@@ -15,7 +15,10 @@ class Api::GamesController < ApplicationController
     content_type: "application/json",
     json: {
       response_type: "ephemeral",
-      text: nil
+      text: nil,
+      attachments: [{
+        mrkdwn_in: ["text"]
+      }]
     }
   }
 
@@ -45,6 +48,8 @@ class Api::GamesController < ApplicationController
       else
         resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
       end
+    elsif challenged.length == 1
+      resp[:json][:text] = "username is missing"
     else
       resp[:json][:text] = "#{challenged} is not a member of the team"
     end
@@ -60,7 +65,7 @@ class Api::GamesController < ApplicationController
       @board = @challenge.create_new_game
       if @board.save!
         resp[:json][:text] = @board.render
-        resp[:json][:attachments] = [{text: @board.render_message}]
+        resp[:json][:attachments][0][:text] = @board.render_message
         resp[:json][:response_type] = "in_channel"
       else
         resp[:json][:text] = @board.errors[:resp].join(",")
@@ -91,7 +96,7 @@ class Api::GamesController < ApplicationController
       else
         @board.process_new_move(params[:user_name], params[:text].to_i)
         resp[:json][:text] = @board.render
-        resp[:json][:attachments] = [{text: @board.render_message}]
+        resp[:json][:attachments][0][:text] = @board.render_message
         resp[:json][:response_type] = "in_channel"
       end
     rescue TTTError => e
@@ -105,7 +110,7 @@ class Api::GamesController < ApplicationController
     resp = dup(DEFAULT_RESP)
     if @board
       resp[:json][:text] = @board.render
-      resp[:json][:attachments] = [{text: @board.render_message}]
+      resp[:json][:attachments][0][:text] = @board.render_message
     else
       resp[:json][:text] = "No game has taken place yet."
     end
