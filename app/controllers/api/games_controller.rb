@@ -96,7 +96,7 @@ class Api::GamesController < ApplicationController
       if @board.nil?
         resp[:json][:text] = "There is no game in progress"
       else
-        @board.process_new_move(params[:user_name], params[:text].to_i)
+        @board.process_new_move(params[:user_name], params[:text].gsub(/\s+.*/).to_i)
         resp[:json][:text] = @board.render
         resp[:json][:attachments] = attachment_text(@board.render_message)
         resp[:json][:response_type] = "in_channel"
@@ -127,7 +127,7 @@ class Api::GamesController < ApplicationController
     2. The game will begin when the other user accepts your challenge\n
     3. On your turn, place your mark with `/mark [position number]`.\n
     4. You can abandon the game any time with `/abandon`\n
-    (See this repo https://github.com/Hirosvk/slack_ttt for more info about the game)\n
+    (Click <https://github.com/Hirosvk/slack_ttt|here> for more info about the game)\n
     "
     resp = dup(DEFAULT_RESP)
     resp[:json][:text] = instructions

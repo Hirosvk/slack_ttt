@@ -95,7 +95,7 @@ private
     new_grid[position - 1] = current_mark
     self.update!(grid: new_grid,
                  current_mark: next_mark,
-                 message: "It's #{next_player}'s turn(#{next_mark})\n`/mark [position]`")
+                 message: "It's #{next_player}'s turn(#{next_mark})\nMark your next move with `/mark [position]`")
   end
 
   def check_for_winner
