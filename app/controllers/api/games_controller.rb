@@ -89,6 +89,15 @@ class Api::GamesController < ApplicationController
   end
 
   def how
+    instructions =
+    """
+    How to play a game of Tic-Tac-Toe:
+    1. Start by challeging another user by typing ```/challenge [username]```
+    2. If another user accepts the challenge by typing ```/accept```, the new game will begin!
+    3. Place your mark with the command ```/mark [position number]```.
+    (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)
+    """
+    render [:json][:text] = instructions
   end
 
   def abandon

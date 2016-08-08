@@ -19,10 +19,8 @@
 * user entering multiple usernames
 * user entering number besides 1-9
 
-* change Board#render to output code block version of the board
-* implement /how (help feature)
-* improve UI / Error messages
 * handle GET request from Slack
+* implement /how (help feature)
 
 ## 5. Integration test
 * change the origin to slack domain only
@@ -32,9 +30,10 @@
 * remove test controller methods
 * remove test token
 * documentation
-* clean up Git files
 
 ## 5. more extra feature
+* change Board#render to output code block version of the board
+* improve UI / Error messages
 * setup Interactive Buttons & Slack API
 * add visual effects (emoji, pics, etc...)
 * create a bot
