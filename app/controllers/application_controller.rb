@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception, unless: :from_slack
 
   def from_slack
-    request.params[:token] == "JMN4zMcOJJnJTpBiu4NNdtIr"
+    SLACK_TOKENS.include?(request.params[:token])
   end
 
   SLACK_TOKENS = [
