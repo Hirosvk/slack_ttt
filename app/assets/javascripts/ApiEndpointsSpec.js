@@ -82,6 +82,20 @@ describe("Tic-Tac-Toe Game", function(){
       it("spec", function(done){
         expect(responseContent().text).toMatch("You need to challenge another player");
         expect(responseContent().response_type).toEqual("ephemeral");
+        console.log(responseContent());
+        done();
+      });
+    });
+
+    describe("returns error msg if there are multiple usernames", function(){
+      beforeEach(function(done){
+        challenge("Lola", "nasley seiji silvie", reset)
+        function reset(){ resetCall(done) }
+      });
+
+      it("spec", function(done){
+        expect(responseContent().text).toMatch("Please only enter one user name without space");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -203,6 +217,48 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("You are not playing this game");
+        expect(responseContent().response_type).toEqual("ephemeral");
+        done();
+      });
+    });
+
+    describe("returns error for invalid position", function(){
+      beforeEach(function(done){
+        setupGame("Steve", "Silly", function(){
+          markBoard("Silly", "0", reset);
+        })
+        function reset(){ resetCall(done) }
+      });
+      it("spec - 0", function(done){
+        expect(responseContent().text).toMatch("Please enter valid a positions.");
+        expect(responseContent().response_type).toEqual("ephemeral");
+        done();
+      });
+    });
+
+    describe("returns error for invalid position", function(){
+      beforeEach(function(done){
+        setupGame("Steve", "Silly", function(){
+          markBoard("Silly", "20", reset);
+        })
+        function reset(){ resetCall(done) }
+      });
+      it("spec - 20", function(done){
+        expect(responseContent().text).toMatch("Please enter valid a positions.");
+        expect(responseContent().response_type).toEqual("ephemeral");
+        done();
+      });
+    });
+
+    describe("returns error for invalid position", function(){
+      beforeEach(function(done){
+        setupGame("Steve", "Silly", function(){
+          markBoard("Silly", "Milly", reset);
+        })
+        function reset(){ resetCall(done) }
+      });
+      it("spec - 'Milly'", function(done){
+        expect(responseContent().text).toMatch("Please enter valid a positions.");
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });

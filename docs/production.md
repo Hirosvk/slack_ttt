@@ -15,21 +15,24 @@
 
 ## 4. polish UI
 * ephemeral / in-channel response
+
 * user entering multiple usernames
 * user not entering names with challenges --> who does Bot respond?
 * user entering unnecessary data
 * user entering number besides 1-9
 
 * change Board#render to output code block version of the board
-* impelment /how (help feature)
+* implement /how (help feature)
 * improve UI / Error messages
 * handle GET request from Slack
 
 ## 5. Integration test
-* run a test
 * change the origin to slack domain only
+* test all features on Slack
 
 ## 4. documentation
+* remove test controller methods
+* remove test token
 * documentation
 * clean up Git files
 
@@ -37,3 +40,4 @@
 * setup Interactive Buttons & Slack API
 * add visual effects (emoji, pics, etc...)
 * create a bot
+* clean up old challenges

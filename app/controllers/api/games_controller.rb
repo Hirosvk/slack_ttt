@@ -26,7 +26,7 @@ class Api::GamesController < ApplicationController
       resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with '/accept' or '/decline')"
       resp[:json][:response_type] = "in_channel"
     else
-      resp[:json][:text] = @challenge.errors[:resp]
+      resp[:json][:text] = @challenge.errors[:resp].join(", ")
     end
     render resp
   end
@@ -42,7 +42,7 @@ class Api::GamesController < ApplicationController
         resp[:json][:text] = @board.render
         resp[:json][:response_type] = "in_channel"
       else
-        resp[:json][:text] = @board.errors[:resp]
+        resp[:json][:text] = @board.errors[:resp].join(",")
       end
     end
     render resp
