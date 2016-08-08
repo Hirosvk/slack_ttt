@@ -2,10 +2,13 @@ class Api::GamesController < ApplicationController
   # after_filter :cors_set_access_control_headers
   #
   # def cors_set_access_control_headers
-  #   headers['Access-Control-Allow-Origin'] = 'https://www.google.com'
+  #   headers['Access-Control-Allow-Origin'] = '*'
   #   headers['Access-Control-Allow-Methods'] = 'POST, GET'
   #   headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type}.join(',')
   # end
+  #
+  # the above code was necessary to test API from local browser,
+  # but unnecessary to take requests from Slack
 
   DEFAULT_RESP = {
     status: 200,
@@ -168,18 +171,18 @@ class Api::GamesController < ApplicationController
   end
 
 ## development purpose only ##
-  def spec
-    render :spec_runner
-  end
-
-  def destroy_all
-    ## test purpose only
-    Challenge.destroy_all
-    Board.destroy_all
-    resp = dup(DEFAULT_RESP)
-    resp[:json][:text] = "All Challenges/Boards Destroyed"
-    render resp
-  end
+  # def spec
+  #   render :spec_runner
+  # end
+  #
+  # def destroy_all
+  #   ## test purpose only
+  #   Challenge.destroy_all
+  #   Board.destroy_all
+  #   resp = dup(DEFAULT_RESP)
+  #   resp[:json][:text] = "All Challenges/Boards Destroyed"
+  #   render resp
+  # end
 
 private
   def dup(hash)
