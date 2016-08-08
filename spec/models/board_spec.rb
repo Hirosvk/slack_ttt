@@ -147,23 +147,30 @@ describe Board do
 
   describe "#render" do
     it "returns the board in readable format" do
-      expect(almost_win.render).to eq("X-2-3\nO-X-6\nO-8-9\nIt's challenged's turn(X)")
-      # expect(almost_win.render).to eq("` X | 2 | 3 `\n` 4 | 5 | 6 `\n` 7 | 8 | 9 `\nIt's challenged's turn(X)")
+      expect(almost_win.render).to eq("--\n` X | 2 | 3 `\n` O | X | 6 `\n` O | 8 | 9 `\n")
       empty_board.process_new_move("challenged", 1)
-      expect(empty_board.render).to eq("X-2-3\n4-5-6\n7-8-9\nIt's starter's turn(O)")
+      expect(empty_board.render).to eq("--\n` X | 2 | 3 `\n` 4 | 5 | 6 `\n` 7 | 8 | 9 `\n")
+    end
+  end
+
+  describe "#render_message" do
+    it "returns whose turn it is" do
+      expect(almost_win.render_message).to eq("It's challenged's turn(X)")
+      empty_board.process_new_move("challenged", 1)
+      expect(empty_board.render_message).to eq("It's starter's turn(O)")
     end
 
     it "returns whose turn it is on the first turn" do
-      expect(empty_board.render).to eq("1-2-3\n4-5-6\n7-8-9\nThis is a new game! It's challenged's turn(X)")
+      expect(empty_board.render_message).to eq("This is a new game! It's challenged's turn(X)")
     end
 
     it "includes the winner in the response if there is a winner" do
       almost_win.process_new_move("challenged", 9)
-      expect(almost_win.render).to eq("X-2-3\nO-X-6\nO-8-X\n*challenged has won!*")
+      expect(almost_win.render_message).to eq("*challenged has won!*")
     end
     it "says that it's a tie if the board is tie" do
       almost_tie.process_new_move("challenged", 9)
-      expect(almost_tie.render).to eq("O-X-X\nX-X-O\nO-O-X\n*It's a tie!*")
+      expect(almost_tie.render_message).to eq("*It's a tie!*")
     end
 
     it "if the game was won more than a minute ago, it shows the resul in the past tense" do
@@ -171,7 +178,7 @@ describe Board do
       two_min_ago = Time.now - 120
       almost_win.update!(updated_at: two_min_ago)
       two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
-      expect(almost_win.render).to match("The last game was won by challenged at #{two_min_ago_s}")
+      expect(almost_win.render_message).to match("The last game was won by challenged at #{two_min_ago_s}")
     end
 
     it "if the game ended as tie more than a minute ago, it shows the result in the past tense" do
@@ -179,7 +186,7 @@ describe Board do
       two_min_ago = Time.now - 120
       almost_tie.update!(updated_at: two_min_ago)
       two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
-      expect(almost_tie.render).to match("The last game was a tie at #{two_min_ago_s}")
+      expect(almost_tie.render_message).to match("The last game was a tie at #{two_min_ago_s}")
     end
 
     it "if the game was completed more than a minute ago, it shows the result in the past tense" do
@@ -187,7 +194,7 @@ describe Board do
       two_min_ago = Time.now - 120
       empty_board.update!(updated_at: two_min_ago)
       two_min_ago_s = two_min_ago.localtime.strftime("%Y-%m-%d %H:%M")
-      expect(empty_board.render).to match("The last game was abandoned at #{two_min_ago_s}")
+      expect(empty_board.render_message).to match("The last game was abandoned at #{two_min_ago_s}")
     end
 
   end
@@ -204,7 +211,7 @@ describe Board do
       empty_board.abandon
       game = Board.find_most_recent_game("00000")
       expect(game.id).to eq(empty_board.id)
-      expect(game.render).to eq("1-2-3\n4-5-6\n7-8-X\n*This game was abandoned*")
+      expect(game.render).to eq("--\n` 1 | 2 | 3 `\n` 4 | 5 | 6 `\n` 7 | 8 | X `\n")
     end
 
     it "returns the most recent one if there are multiple archived games" do

@@ -403,7 +403,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch(/1-2-3\n4-5-6\n7-8-9\n.*It's Silly's turn/)
+        expect(responseContent().text).toMatch("It's Silly's turn")
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });

@@ -32,7 +32,7 @@
 * documentation
 
 ## 5. more extra feature
-* change Board#render to output code block version of the board
+* change Board#render to output code block version of the board -> message as attachment
 * improve UI / Error messages
 * setup Interactive Buttons & Slack API
 * add visual effects (emoji, pics, etc...)

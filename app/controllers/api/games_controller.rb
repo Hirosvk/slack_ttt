@@ -22,7 +22,7 @@ class Api::GamesController < ApplicationController
                                channel_id: params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.save
-      resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with '/accept' or '/decline')"
+      resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with `/accept` or `/decline`)"
       resp[:json][:response_type] = "in_channel"
     else
       resp[:json][:text] = @challenge.errors[:resp].join(", ")
@@ -39,6 +39,7 @@ class Api::GamesController < ApplicationController
       @board = @challenge.create_new_game
       if @board.save!
         resp[:json][:text] = @board.render
+        resp[:json][:attachments] = [{text: @board.render_message}]
         resp[:json][:response_type] = "in_channel"
       else
         resp[:json][:text] = @board.errors[:resp].join(",")
@@ -69,6 +70,7 @@ class Api::GamesController < ApplicationController
       else
         @board.process_new_move(params[:user_name], params[:text].to_i)
         resp[:json][:text] = @board.render
+        resp[:json][:attachments] = [{text: @board.render_message}]
         resp[:json][:response_type] = "in_channel"
       end
     rescue TTTError => e
@@ -82,6 +84,7 @@ class Api::GamesController < ApplicationController
     resp = dup(DEFAULT_RESP)
     if @board
       resp[:json][:text] = @board.render
+      resp[:json][:attachments] = [{text: @board.render_message}]
     else
       resp[:json][:text] = "No game has taken place yet."
     end
@@ -92,9 +95,10 @@ class Api::GamesController < ApplicationController
     origin = request.headers.env["HTTP_ORIGIN"]
     instructions =
     "How to play a game of Tic-Tac-Toe:\n
-    1. Start by challeging another user by typing `/challenge [username]`\n
-    2. The new game will begin when the challenged user accepts the challenge by typing `/accept`\n
-    3. On your turn, place your mark with this command `/mark [position number]`.\n
+    1. Start by challeging another user with `/challenge [username]`\n
+    2. The game will begin when the other user accepts your challenge\n
+    3. On your turn, place your mark with `/mark [position number]`.\n
+    4. You can abandon the game any time with `/abandon`\n
     (For the detailed instructions, see this GitHub repo https://github.com/Hirosvk/slack_ttt)\n
     "
     resp = dup(DEFAULT_RESP)

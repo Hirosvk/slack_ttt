@@ -56,13 +56,20 @@ class Board < ActiveRecord::Base
 
   def render
     game_grid = self.grid
-    result = ""
-    9.times do |i|
-      separator = "-"
-      separator = "\n" if (i+1)%3 == 0
-      result += game_grid[i] + separator
-    end
+    result = "--\n"
 
+    [0,3,6].each do |i|
+      result += "` #{game_grid[i]} | #{game_grid[i+1]} | #{game_grid[i+2]} `\n"
+    end
+    result
+  end
+    # 9.times do |i|
+    #   separator = "-"
+    #   separator = "\n" if (i+1)%3 == 0
+    #   result += game_grid[i] + separator
+    # end
+  def render_message
+    result = ""
     if self.status == "C" && self.updated_at <= (Time.now - 60)
       winner = winner?
       completed_at = self.updated_at.localtime.strftime("%Y-%m-%d %H:%M")
