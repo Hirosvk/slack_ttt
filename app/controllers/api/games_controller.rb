@@ -17,8 +17,10 @@ class Api::GamesController < ApplicationController
   }
 
   def challenge
-    @challenge = Challenge.new(challenger: params[:user_name].gsub(/\s+.*/, ""),
-                               challenged: params[:text],
+    challenger = params[:user_name]
+    challenged = params[:text].gsub(/\s+.*/, "")
+    @challenge = Challenge.new(challenger: challenger,
+                               challenged: challenged,
                                channel_id: params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.save
@@ -146,6 +148,23 @@ private
     hash.inject({}) do |accum, (k,v)|
       accum[k] = v.is_a?(Hash) ? dup(v) : v
       accum
+    end
+  end
+
+  def team_user_status
+    begin
+      raw_resp = HTTP.get("https://slack.com/api/users.list?token=xoxp-66138517061-66148393778-67329536503-6fe10c6f55&presence=1&pretty=1")
+    rescue HTTP::Error => e
+      return e.message
+    end
+    members = raw_resp.parse["members"]
+    if raw_resp.code != 200 && !members.is_a?(Array)
+      return "connection error"
+    else
+      active_members = members.inject({}) do |accum, member|
+        accum[member["name"]] = member["presence"]
+        accum
+      end
     end
   end
 

@@ -15,7 +15,8 @@ class ApplicationController < ActionController::Base
     "o92ITKog4nn3k7TATv1ZsNAt", # /decline
     "6svC7Ug5JWRyyvTknUQsI9f2", # /mark
     "X37bTyhXOyoQ4QaXPE5eZh41", # /abandon
-    "yJgkg2ct70GaiZlAaEoLDSoc"  # /how
+    "yJgkg2ct70GaiZlAaEoLDSoc", # /how
+    "hBvuKo5qVKpRk4H1qIn76UZ3"  # app token
   ]
 
 

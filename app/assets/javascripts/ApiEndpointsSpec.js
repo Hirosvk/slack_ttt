@@ -45,7 +45,7 @@ describe("Tic-Tac-Toe Game", function(){
         });
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("This is a new game! It's Silly's turn");
+        expect(responseContent().attachments[0].text).toMatch("This is a new game! It's Silly's turn");
         expect(responseContent().response_type).toEqual("in_channel");
 
         done();
@@ -122,7 +122,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("This is a new game! It's Dan's turn")
+        expect(responseContent().attachments[0].text).toMatch("This is a new game! It's Dan's turn")
         expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
@@ -187,7 +187,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("X-2-3\n4-5-6\n7-8-9\nIt's Steve's turn");
+        expect(responseContent().attachments[0].text).toMatch("It's Steve's turn");
         expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
@@ -289,7 +289,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("Silly has won");
+        expect(responseContent().attachments[0].text).toMatch("Silly has won");
         expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
@@ -305,7 +305,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("It's a tie");
+        expect(responseContent().attachments[0].text).toMatch("It's a tie");
         expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
@@ -403,7 +403,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("It's Silly's turn")
+        expect(responseContent().attachments[0].text).toMatch("It's Silly's turn")
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
@@ -416,7 +416,7 @@ describe("Tic-Tac-Toe Game", function(){
         function reset(){ resetCall(done) }
       });
       it("spec", function(done){
-        expect(responseContent().text).toMatch("This game was abandoned")
+        expect(responseContent().attachments[0].text).toMatch("This game was abandoned")
         expect(responseContent().response_type).toEqual("ephemeral");
         done();
       })

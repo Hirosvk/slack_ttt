@@ -51,3 +51,20 @@ function _makeAjaxCall(content, successCallback){
   request.send(parseContent(content));
 };
 function responseContent(a){console.log(a)}
+
+
+
+
+
+function makeAjaxCall(){
+  let request = new XMLHttpRequest();
+  request.open("GET", "https://slack.com/api/users.list?token=xoxp-66138517061-66148393778-67329536503-6fe10c6f55&presence=1&pretty=1", true);
+  request.onload = function(resp){
+    if (request.status === 200){
+      console.log(request.responseText);
+    } else {
+      console.log(resp);
+    }
+  }
+  request.send();
+};

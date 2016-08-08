@@ -39,3 +39,10 @@
 - [ ] create a bot
 - [ ] clean up old challenges
 - [ ] user entering unnecessary data
+
+
+## API notes
+* user challenges
+* get user list (users.list) with option=1(presence info)
+* find the status of the challenged user
+* display the challenge message
