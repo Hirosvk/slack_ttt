@@ -3,7 +3,7 @@ class Api::GamesController < ApplicationController
 
   def cors_set_access_control_headers
     # headers['Access-Control-Allow-Origin'] = 'http://api.rubyonrails.org'
-    headers['Access-Control-Allow-Origin'] = 'https://www.google.com'
+    headers['Access-Control-Allow-Origin'] = '*'
     headers['Access-Control-Allow-Methods'] = 'POST, GET'
     headers['Access-Control-Allow-Headers'] = %w{Origin Accept Content-Type X-Requested-With auth_token X-CSRF-Token}.join(',')
     headers['Access-Control-Max-Age'] = "1728000"
