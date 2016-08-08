@@ -96,7 +96,7 @@ class Api::GamesController < ApplicationController
       if @board.nil?
         resp[:json][:text] = "There is no game in progress"
       else
-        @board.process_new_move(params[:user_name], params[:text].gsub(/\s+.*/).to_i)
+        @board.process_new_move(params[:user_name], params[:text].gsub(/\s+.*/, "").to_i)
         resp[:json][:text] = @board.render
         resp[:json][:attachments] = attachment_text(@board.render_message)
         resp[:json][:response_type] = "in_channel"
