@@ -8,8 +8,14 @@ class ApplicationController < ActionController::Base
   end
 
   SLACK_TOKENS = [
-    "gIkuvaNzQIHg97ATvDxqgjtO", # for testing
+    "gIkuvaNzQIHg97ATvDxqgjtO", # -for testing
     "JMN4zMcOJJnJTpBiu4NNdtIr", # /show_board
-    "CmViLMXuqm56gq8rTDll6SvR"  # /challenge
+    "CmViLMXuqm56gq8rTDll6SvR", # /challenge
+    "pGaNxx5S7OpLruQ9a0cs9j84", # /accept
+    "o92ITKog4nn3k7TATv1ZsNAt", # /decline
+    "6svC7Ug5JWRyyvTknUQsI9f2", # /mark
+    "X37bTyhXOyoQ4QaXPE5eZh41", # /abandon
+    "yJgkg2ct70GaiZlAaEoLDSoc"  # /how
   ]
+  
 end

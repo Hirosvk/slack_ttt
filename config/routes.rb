@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     post 'games/mark' => 'games#mark'
     post 'games/decline' => 'games#decline'
     post 'games/show_board' => 'games#show_board'
-    post 'games/help' => 'games#help'
+    post 'games/how' => 'games#how'
 
     get 'games/spec' => 'games#spec'
     post 'games/destroy_all' => 'games#destroy_all'

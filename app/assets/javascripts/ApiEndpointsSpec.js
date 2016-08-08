@@ -347,13 +347,13 @@ describe("Tic-Tac-Toe Game", function(){
   });
 
 
-  describe("/help", function(){
+  describe("/how", function(){
     it("returns the instruction of the game");
   });
 
-  describe("/record", function(){
-    it("provides the recent games' results");
-  });
+  // describe("/record", function(){
+  //   it("provides the recent games' results");
+  // });
 
 
 // helper functions
