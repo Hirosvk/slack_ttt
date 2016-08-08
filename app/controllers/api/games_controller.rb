@@ -172,7 +172,7 @@ private
       return e.message
     end
     members = raw_resp.parse["members"]
-    if raw_resp.code != 200 && !members.is_a?(Array)
+    if raw_resp.code != 200 || !members.is_a?(Array)
       return "connection error"
     else
       active_members = members.inject({}) do |accum, member|
