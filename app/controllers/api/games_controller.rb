@@ -8,7 +8,12 @@ class Api::GamesController < ApplicationController
   end
 
   DEFAULT_RESP = {
-    status: 200, content_type: "application/json", json: {text: nil}
+    status: 200,
+    content_type: "application/json",
+    json: {
+      response_type: "ephemeral",
+      text: nil
+    }
   }
 
   def challenge
@@ -19,6 +24,7 @@ class Api::GamesController < ApplicationController
     # debugger if params[:user_name] == "Jesse"
     if @challenge.save
       resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with '/accept' or '/decline')"
+      resp[:json][:response_type] = "in_channel"
     else
       resp[:json][:text] = @challenge.errors[:resp]
     end
@@ -34,6 +40,7 @@ class Api::GamesController < ApplicationController
       @board = @challenge.create_new_game
       if @board.save!
         resp[:json][:text] = @board.render
+        resp[:json][:response_type] = "in_channel"
       else
         resp[:json][:text] = @board.errors[:resp]
       end
@@ -49,6 +56,7 @@ class Api::GamesController < ApplicationController
     else
       @challenge.decline
       resp[:json][:text] = "#{@challenge.challenged} declined the challenge from #{@challenge.challenger}"
+      resp[:json][:response_type] = "in_channel"
     end
     render resp
   end
@@ -62,6 +70,7 @@ class Api::GamesController < ApplicationController
       else
         @board.process_new_move(params[:user_name], params[:text].to_i)
         resp[:json][:text] = @board.render
+        resp[:json][:response_type] = "in_channel"
       end
     rescue TTTError => e
       resp[:json][:text] = e.message
@@ -80,7 +89,7 @@ class Api::GamesController < ApplicationController
     render resp
   end
 
-  def help
+  def how
   end
 
   def abandon
@@ -90,6 +99,7 @@ class Api::GamesController < ApplicationController
       if params[:user_name] == @board.x || params[:user_name] == @board.o
         @board.abandon
         resp[:json][:text] = "#{params[:user_name]} abandoned the game"
+        resp[:json][:response_type] = "in_channel"
       else
         resp[:json][:text] = "Only the current players can abandon"
       end
@@ -113,6 +123,7 @@ class Api::GamesController < ApplicationController
     render resp
   end
 
+private
   def dup(hash)
     hash.inject({}) do |accum, (k,v)|
       accum[k] = v.is_a?(Hash) ? dup(v) : v

@@ -32,6 +32,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("Steve challenges Silly");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -45,6 +46,8 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("This is a new game! It's Silly's turn");
+        expect(responseContent().response_type).toEqual("in_channel");
+
         done();
       });
     });
@@ -63,6 +66,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("You cannot start a new game while there is a pending challenge");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -77,6 +81,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("You need to challenge another player");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -90,6 +95,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("Only one game can take place per channel");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -104,6 +110,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("This is a new game! It's Dan's turn")
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -120,6 +127,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("There is no challenge to accept");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -138,6 +146,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("Silly declined the challenge from Steve");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -150,6 +159,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("There is no challenge to decline");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -165,6 +175,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("X-2-3\n4-5-6\n7-8-9\nIt's Steve's turn");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -178,6 +189,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("It's not your turn!");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -191,6 +203,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("You are not playing this game");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -206,6 +219,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("That space is already marked");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -221,6 +235,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("Silly has won");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -236,6 +251,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("It's a tie");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -248,6 +264,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("There is no game in progress");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -266,6 +283,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("Steve abandons", function(done){
         expect(responseContent().text).toMatch("Steve abandoned the game");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -280,6 +298,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("Silly abandons", function(done){
         expect(responseContent().text).toMatch("Silly abandoned the game");
+        expect(responseContent().response_type).toEqual("in_channel");
         done();
       });
     });
@@ -295,6 +314,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("Maria tries to abandon", function(done){
         expect(responseContent().text).toMatch("Only the current players can abandon");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -307,6 +327,7 @@ describe("Tic-Tac-Toe Game", function(){
 
       it("spec", function(done){
         expect(responseContent().text).toMatch("There is no game to abandon");
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     })
@@ -328,6 +349,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch(/1-2-3\n4-5-6\n7-8-9\n.*It's Silly's turn/)
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       });
     });
@@ -340,6 +362,7 @@ describe("Tic-Tac-Toe Game", function(){
       });
       it("spec", function(done){
         expect(responseContent().text).toMatch("This game was abandoned")
+        expect(responseContent().response_type).toEqual("ephemeral");
         done();
       })
 
