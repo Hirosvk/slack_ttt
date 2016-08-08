@@ -34,7 +34,7 @@ class Api::GamesController < ApplicationController
     @challenge = Challenge.find_challenge(params[:user_name], params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.nil?
-      resp[:json][:text] = "There is no challenge to accept"
+      resp[:json][:text] = "There is no challenge to accept(challenges expire in 1 min)"
     else
       @board = @challenge.create_new_game
       if @board.save!
@@ -52,7 +52,7 @@ class Api::GamesController < ApplicationController
     @challenge = Challenge.find_challenge(params[:user_name], params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.nil?
-      resp[:json][:text] = "There is no challenge to decline"
+      resp[:json][:text] = "There is no challenge to decline(challenges expire in 1 min)"
     else
       @challenge.decline
       resp[:json][:text] = "#{@challenge.challenged} declined the challenge from #{@challenge.challenger}"

@@ -33,7 +33,7 @@ class Board < ActiveRecord::Base
   end
 
   def abandon
-    self.update!(status: "C", message: "*This game was abandoned*")
+    self.update!(status: "C", message: "This game was abandoned")
   end
 
   def process_new_move(player, position)
@@ -63,11 +63,7 @@ class Board < ActiveRecord::Base
     end
     result
   end
-    # 9.times do |i|
-    #   separator = "-"
-    #   separator = "\n" if (i+1)%3 == 0
-    #   result += game_grid[i] + separator
-    # end
+
   def render_message
     result = ""
     if self.status == "C" && self.updated_at <= (Time.now - 60)
@@ -99,7 +95,7 @@ private
     new_grid[position - 1] = current_mark
     self.update!(grid: new_grid,
                  current_mark: next_mark,
-                 message: "It's #{next_player}'s turn(#{next_mark})")
+                 message: "It's #{next_player}'s turn(#{next_mark})\n`/mark [position]`")
   end
 
   def check_for_winner
@@ -154,7 +150,7 @@ private
     self.grid ||= "123456789"
     self.current_mark ||= "X"
     self.status ||= "IP"
-    self.message ||= "This is a new game! It's #{current_player}'s turn(#{current_mark})"
+    self.message ||= "This is a new game! It's #{current_player}'s turn(#{current_mark})\n`/mark [position]`"
   end
 
   def check_players
