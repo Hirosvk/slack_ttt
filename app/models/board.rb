@@ -68,7 +68,7 @@ class Board < ActiveRecord::Base
     result = ""
     if self.status == "C" && self.updated_at <= (Time.now - 60)
       winner = winner?
-      completed_at = self.updated_at.localtime.strftime("%Y-%m-%d %H:%M")
+      completed_at = self.updated_at.localtime.strftime("%Y-%h-%d %l:%M %P %Z")
       if filled? && !winner # tie
         result += "The last game was a tie at #{completed_at}"
       elsif winner
@@ -95,7 +95,7 @@ private
     new_grid[position - 1] = current_mark
     self.update!(grid: new_grid,
                  current_mark: next_mark,
-                 message: "It's #{next_player}'s turn(#{next_mark})\nMark your next move with `/mark [position]`")
+                 message: "It's #{next_player}'s turn(#{next_mark})\nMake your next move with `/mark [position]`")
   end
 
   def check_for_winner
