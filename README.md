@@ -1,5 +1,5 @@
 # Slack Tic-Tac-Toe
-Slack Tic-Tac-Toe was created for [this Slack Channel][slack_link]. Please see [here](## Technical notes) for technical notes of the app..
+Slack Tic-Tac-Toe was created for [this Slack Channel][slack_link]. Please see [here][technical_note] for technical notes of the app..
 
 ## How to play
 The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/abandon`, `/show_board`, `/check`, and `/how`.
@@ -35,7 +35,7 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 * If you add extra texts after the command, they will be ignored.
 * For example, if you type `/accept challenge`, only `/accept` will be registered. Similarly, `/challenge this_user that_user` will setup a challenge only for 'this_user', and 'that_user' is ignored.
 
-
+<a name="tech_note"></a>
 ## Technical notes
 
 ### App Server Backend
@@ -92,7 +92,7 @@ I ran the Jasmine spec in two spec runner; one to test the local server in the d
 
 After the initial implementation of the game, I changed the `#challenge` method slightly so that it makes a request to Slack API `users.list` to confirm the users' active status. The change is not reflected on the Jasmine specs, and I manually tested the new feature on the Slack Channels directly. Please note that many specs fail with the current implementation.
 
-
+[technical_note]:#tech_note
 [slack_link]:https://ae27583885test0.slack.com/messages/general/
 [schema]:db/schema.rb
 [board_model]:app/models/board.rb
