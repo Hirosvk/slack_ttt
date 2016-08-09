@@ -23,18 +23,18 @@
 - [x] implement /how (help feature)
 
 ## 5. Integration test
-- [ ] change the origin to slack domain only
-- [ ] test all features on Slack
+- [x] change the origin to slack domain only
+- [x] test all features on Slack
 
 ## 4. Make it pretty
-- [ ] remove test controller methods
-- [ ] remove test token
+- [x] remove test controller methods
+- [x] remove test token
 - [ ] enable heroku dyno
 - [ ] documentation
 
 ## 5. UI
 - [ ] add dropdown instructions
-- [ ] improve error messages
+- [x] improve error messages
 
 ## 5. more extra feature
 - [x] change Board#render to output code block version of the board -> message as attachment
