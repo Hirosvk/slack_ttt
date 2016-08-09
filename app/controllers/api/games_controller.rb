@@ -43,7 +43,7 @@ class Api::GamesController < ApplicationController
         if !team_user_status.keys.include?(challenged)
           resp[:json][:text] = "#{challenged} is not a member of the team"
         else
-          if team_user_status[challenged] != "active"
+          if team_user_status[challenged] && team_user_status[challenged] != "active"
             resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
 
           else team_user_status[challenged] == "active"

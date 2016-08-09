@@ -32,30 +32,34 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 * You can get basic instructions with the `/how` command.
 
 ### Note on extra text
-* If you add extra texts after the command, they will be ignored.
+* If you add extra text after the command, that will be ignored.
 * For example, if you type `/accept challenge`, only `/accept` will be registered. Similarly, `/challenge this_user that_user` will setup a challenge only for 'this_user', and 'that_user' is ignored.
 
 <a name="tech_note"></a>
 ## Technical notes
 
-### App Server Backend
-The app's backend was built on Ruby on Rails following the basic MVC principles (this game lacks the View, however). The database is run on PostgreSQL, and the application was deployed to and run by Heroku.
+### App Backend
+Slack Tic-Tac-Toe's backend was built on Ruby on Rails following the basic MVC principles. The database is run on PostgreSQL, and the application was deployed to and run by Heroku.
 
 ***Models:***
-Most of the game logic is taken care of in the Models. Three models/SQL tables are used in this app. 'Challenge' and 'Board' models handle most of the game logic. Due to the simplicity of the application, 'Challenge' and 'Board' don't have associations to each other. Once a challenge is accepted, there is no need to access its information anymore. The boards table keeps such information as players' usernames, channel_id, the current_status of the board, and the status of the game.
-
-'Credential' model handles the tokens necessary for the secure connections with Slack. The tokens for the incoming request from Slack and the token for Slack API are kept in credentials table.
+Most of the game logic is taken care of in the Models. Three models/tables are used in this app. 'Challenge' and 'Board' models handle most of the game logic. Due to the simplicity of the application, 'Challenge' and 'Board' don't have associations to each other. Once a challenge is accepted, there is no need to access its information anymore. The boards table keeps such information as players' usernames, channel_id, the current_status of the board, and the status of the game. See [schema][schema] for more information.
 * [schema][schema]
 * [Board][board_model]
 * [Challenge][challenge_model]
+
+'Credential' model handles the tokens necessary for the secure connections with Slack. The tokens for the incoming request from Slack and for Slack API are kept in the credentials table.
 * [Credential][credential_model]
 
 ***Controller:***
 'GamesController' is handles all the incoming request regarding the game. All public methods here correspond with the Slack slach commands (`/challenge` => `GamesController#challenge`, for example). Most of them have the same functionality; they verify the request and either execute the game action or send back an error message. I tried to provide descriptive messages to which users would intuitively respond.
 
-`#check` and `#challenge` calls the private method `#get_team_user_status`, which sends a request to Slack API and gets all users presence status. `#get_team_user_status` handles possible connection errors with Slack API, and returns the error message.
+`#check` and `#challenge` calls the private method `#get_team_user_status`, which sends a request to Slack API `users.list` and parse all users' presence status into a hash {username => status}. The method also rescues possible connection errors between the app server and Slack API, and returns the error message to the user.
 * [GamesController][GamesController]
 
+All responses to Slack are sent in JSON format with the status code 200.
+
+***View:***
+I did not use View for this app, and I could have used setup jbuilder view files and made the GamesController simpler, free of formatting logic, and easier to read. However, I skipped this simply because I don't have enough time now.
 
 ### API Endpoints
 All incoming requests are done by POST request so that when (or if) I bundle the game into a Slack App, I won't have to change the router. (I read that Slack App only sends POST requests). Each slash command name matches the names of the route and controller method.
@@ -70,14 +74,14 @@ domain: https://hiro-slack-ttt.herokuapp.com/
 - POST api/games/check => GamesController#check
 - POST api/games/how => GamesController#how
 
-Additionally, it accepts GET request to any unmatched routes, and returns a response with the status 200 with a JSON message "Hi Slack people!".
+Additionally, it accepts GET request to any unmatched routes, and returns a response with the status 200 with a JSON message "Hi Slack people!". This feature was implemented to accommodate SSL checking.
 
 ### Security and Credentials
-Slack Tic-Tac-Toe verify the parameter "token" for all incoming requests besides GET request. Tokens issued by Slack are stored in the server database, and any incoming requests from other sites without valid tokens will fail. Please see the code [here][slash_command_token]
+Slack Tic-Tac-Toe verifies the parameter "token" for all incoming requests besides GET request. Tokens issued by Slack are stored in the server database, and any incoming requests from other sites without valid tokens will fail. Please see the code [here][slash_command_token]
 
 When the app makes a request to Slack API, it retrieves the token from the database. The app uses Slack API Tester token, which, I think, is sufficient for the purpose of the assignment.
 
-I needed to set up Cross Origin Resource Sharing when I was conducting the integration test and sending requests from my browser. However, I found out that it was unnecessary for the requests from Slack and commented out [this section][cors]
+I needed to set up Cross Origin Resource Sharing when I was conducting the integration test and sending requests from my browser. However, I found out that it was unnecessary for the requests from Slack and so commented out [this section][cors]
 
 ### Test Drive Development
 I used TDD approach in creating my Slack Tic-Tac-Toe to achieve robust functionalities and to make refactoring/modification easier. Two rounds of testing was conducted during development: unit tests for the core models(Challenge and Board), and integration tests for API endpoints.
@@ -86,11 +90,11 @@ I used TDD approach in creating my Slack Tic-Tac-Toe to achieve robust functiona
 These [RSpec files][rspec_files_folder] were written to thoroughly test the functions of the app's core models, Challenge and Board. All the specs were written before writing the models and used frequently throughout the development.
 
 ***Integration Test:***
-This [jasmine spec][jasmine_file] tests API endpints. It sends actual HTTP requests to the server and verifies responses. I originally attempted using `runs()` and `waitsFor()` to properly tests the responses of asynchronous calls. However, I soon learned that they were deprecated features in newer versions of Jasmine. Instead, I  chained multiple function calls using callbacks, and by passing the optional `done()` callback on `beforeEach()` and `it()` blocks. [Reference][Jasmin_doc]
+This [jasmine spec][jasmine_file] tests API endpints. It sends actual HTTP requests to the server and verifies responses. I originally attempted using `runs()` and `waitsFor()` to properly tests the responses of asynchronous calls. However, I soon learned that they were deprecated features in newer versions of Jasmine. Instead, I  chained multiple HTTP calls using callbacks, and by passing the optional `done()` callback on `beforeEach()` and `it()` blocks. [Reference][Jasmin_doc]
 
-I ran the Jasmine spec in two spec runner; one to test the local server in the development environment, the other to test the production environment after the deployment to Heroku. Since the spec was not run in the test environment, I manually reset the database state with [this test-only controller method][games#destroy_all] so that all specs are run independently from the others.
+I ran the Jasmine spec in two spec runner; one to test the local server in the development environment, the other to test the production environment after the deployment to Heroku. Since the spec was not run in the test environment, I manually reset the database state with [this test-only controller method][games#destroy_all] so that all specs are run independently from the others. (It might not have been the best practice, but it served my purpose just this time.)
 
-After the initial implementation of the game, I changed the `#challenge` method slightly so that it makes a request to Slack API `users.list` to confirm the users' active status. The change is not reflected on the Jasmine specs, and I manually tested the new feature on the Slack Channels directly. Please note that many specs fail with the current implementation.
+After the initial implementation of the game, I changed the `#challenge` method so that it makes a request to Slack API `users.list` to confirm the users' active status. The change is not reflected on the Jasmine specs, and I manually tested the new feature on the Slack Channels directly. Please note that most Jasmine specs fail with the current implementation.
 
 [technical_note]:#tech_note
 [slack_link]:https://ae27583885test0.slack.com/messages/general/
