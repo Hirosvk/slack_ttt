@@ -129,7 +129,7 @@ class Api::GamesController < ApplicationController
     "How to play a game of Tic-Tac-Toe:\n
     1. Start by challeging another user with `/challenge [username]`\n
     2. The game will begin when the other user accepts your challenge\n
-    3. On your turn, place your mark with `/mark [position number]`.\n
+    3. On your turn, place your mark with `/mark [position]`.\n
     4. You can abandon the game any time with `/abandon`\n
     (Click <https://github.com/Hirosvk/slack_ttt|here> for more info about the game)\n
     "
@@ -189,20 +189,6 @@ class Api::GamesController < ApplicationController
     render status: 200, json: "Hi Slack people!"
   end
 
-## development purpose only ##
-  # def spec
-  #   render :spec_runner
-  # end
-  #
-  # def destroy_all
-  #   ## test purpose only
-  #   Challenge.destroy_all
-  #   Board.destroy_all
-  #   resp = dup(DEFAULT_RESP)
-  #   resp[:json][:text] = "All Challenges/Boards Destroyed"
-  #   render resp
-  # end
-
 private
   def dup(hash)
     hash.inject({}) do |accum, (k,v)|
@@ -235,5 +221,18 @@ private
       end
     end
   end
+## testing purpose only ##
+  # public
+  # def spec
+  #   render :spec_runner
+  # end
+  #
+  # def destroy_all
+  #   Challenge.destroy_all
+  #   Board.destroy_all
+  #   resp = dup(DEFAULT_RESP)
+  #   resp[:json][:text] = "All Challenges/Boards Destroyed"
+  #   render resp
+  # end
 
 end
