@@ -29,7 +29,7 @@
 ## 4. Make it pretty
 - [x] remove test controller methods
 - [x] remove test token
-- [ ] enable heroku dyno
+- [x] enable heroku dyno
 - [ ] documentation
 
 ## 5. UI

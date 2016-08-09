@@ -161,26 +161,30 @@ class Api::GamesController < ApplicationController
     team_user_status = get_team_user_status
     game = Board.find_most_recent_game(params[:channel_id])
 
-    if game && game.status == "IP"
-      x_active = team_user_status[game.x] == "active"
-      o_active = team_user_status[game.o] == "active"
-      if x_active && o_active
-        resp[:json][:text] = "Everything looks fine"
-      else
-        who_left = ""
-        if !x_active && !o_active
-          who_left = "both players"
-        elsif !x_active
-          who_left = game.x
-        else
-          who_left = game.o
-        end
-        resp[:json][:text] = "Looks like #{who_left} left the Slack channel! This game is now abandoned"
-        resp[:json][:response_type] = "in_channel"
-        game.abandon
-      end
+    if team_user_status.is_a?(String) # if get_team_user_status returns error msg
+      resp[:json][:text] = team_user_status
     else
-      resp[:json][:text] = "no game is taking place"
+      if game && game.status == "IP"
+        x_active = team_user_status[game.x] == "active"
+        o_active = team_user_status[game.o] == "active"
+        if x_active && o_active
+          resp[:json][:text] = "Everything looks fine"
+        else
+          who_left = ""
+          if !x_active && !o_active
+            who_left = "both players"
+          elsif !x_active
+            who_left = game.x
+          else
+            who_left = game.o
+          end
+          resp[:json][:text] = "Looks like #{who_left} left the Slack channel! This game is now abandoned"
+          resp[:json][:response_type] = "in_channel"
+          game.abandon
+        end
+      else
+        resp[:json][:text] = "no game is taking place"
+      end
     end
     render resp
   end
