@@ -51,7 +51,7 @@ class Api::GamesController < ApplicationController
                                        challenged: challenged,
                                        channel_id: params[:channel_id])
             if @challenge.save
-              resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond with `/accept` or `/decline`)"
+              resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n*#{@challenge.challenged}*, do you accept? (respond with `/accept` or `/decline`)"
               resp[:json][:response_type] = "in_channel"
             else
               resp[:json][:text] = @challenge.errors[:resp].join(", ")
