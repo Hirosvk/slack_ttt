@@ -33,7 +33,7 @@
 - [ ] documentation
 
 ## 5. UI
-- [ ] add dropdown instructions
+- [x] add dropdown instructions
 - [x] improve error messages
 
 ## 5. more extra feature

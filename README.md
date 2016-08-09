@@ -10,9 +10,9 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
   - username is blank
 * The challenge user either `/accept` or `/decline` the challenge. If the user accepts the challenge, the new game will begin.
 * Notes:
-  * Challenges expire in one minute.
-  * You cannot challenge while there is a pending challenge in the channel.
-  * You cannot challenge while there is a game in progress in the channel. Only one game can take place per channel at a time.
+  - Challenges expire in one minute.
+  - You cannot challenge while there is a pending challenge in the channel.
+  - You cannot challenge while there is a game in progress in the channel. Only one game can take place per channel at a time.
 
 ### While playing the game
 * On you turn, place your mark with `/mark [position]`.
@@ -32,4 +32,19 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 
 ### Note on extra text
 * If you add extra texts after the command, they will be ignored.
-* For example, if you type `/accept challenge`, only `/accept` will be registered. Similarly, `/challenge this_user that_user` will create a challenge only for 'this_user', and 'that_user' is ignored.
+* For example, if you type `/accept challenge`, only `/accept` will be registered. Similarly, `/challenge this_user that_user` will setup a challenge only for 'this_user', and 'that_user' is ignored.
+
+## Technical notes
+### Test Drive Development
+* links to spec files
+* Asynchronous tests
+### Server Backend
+* models/tables
+* Heroku
+### Security and Credentials
+* verifies slack_tokens
+* send Slack test token
+* CORS
+### API Endpoints
+* RESTful design
+* Handles GET request
