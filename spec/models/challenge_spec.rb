@@ -56,22 +56,22 @@ RSpec.describe Challenge, type: :model do
 
   end
 
-  describe "::find_challenge" do
+  describe "::find_valid_challenge" do
     it "returns a challenge made within the last 1 minute" do
       another_challenge.save!
       another_challenge.update!(created_at: (Time.now - 120))
       challenge.save!
-      found = Challenge.find_challenge("Aki","12345")
+      found = Challenge.find_valid_challenge("Aki","12345")
       expect(found).to_not eq(nil)
       expect(found.id).to eq(challenge.id)
     end
     it "returns nil if no challenges were found" do
-      found = Challenge.find_challenge("Aki", "12345")
+      found = Challenge.find_valid_challenge("Aki", "12345")
       expect(found).to eq(nil)
 
       another_challenge.save!
       another_challenge.update!(created_at: (Time.now - 120))
-      found = Challenge.find_challenge("Aki", "12345")
+      found = Challenge.find_valid_challenge("Aki", "12345")
       expect(found).to eq(nil)
     end
   end
@@ -86,18 +86,18 @@ RSpec.describe Challenge, type: :model do
     end
     it "destroy the challenge" do
       challenge.save!
-      expect(Challenge.find_challenge("Aki", "12345")).to_not eq(nil)
+      expect(Challenge.find_valid_challenge("Aki", "12345")).to_not eq(nil)
       challenge.create_new_game
-      expect(Challenge.find_challenge("Aki", "12345")).to eq(nil)
+      expect(Challenge.find_valid_challenge("Aki", "12345")).to eq(nil)
     end
   end
 
   describe "decline" do
     it "destroy the challenge" do
       challenge.save!
-      expect(Challenge.find_challenge("Aki", "12345")).to_not eq(nil)
+      expect(Challenge.find_valid_challenge("Aki", "12345")).to_not eq(nil)
       challenge.decline
-      expect(Challenge.find_challenge("Aki", "12345")).to eq(nil)
+      expect(Challenge.find_valid_challenge("Aki", "12345")).to eq(nil)
     end
 
     it "doesn't create a new game" do

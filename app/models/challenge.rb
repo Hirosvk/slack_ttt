@@ -14,7 +14,7 @@ class Challenge < ActiveRecord::Base
   validates :challenger, :challenged, :channel_id, :presence => true
   validate :check_players, :game_IP?, :pending_challenges?
 
-  def self.find_challenge(challenged_player, channel)
+  def self.find_valid_challenge(challenged_player, channel)
     one_min_ago = Time.now - 60
     games = self.where("challenged = ?
                         AND channel_id = ?

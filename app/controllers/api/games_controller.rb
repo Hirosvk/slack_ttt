@@ -64,7 +64,7 @@ class Api::GamesController < ApplicationController
   end
 
   def accept
-    @challenge = Challenge.find_challenge(params[:user_name], params[:channel_id])
+    @challenge = Challenge.find_valid_challenge(params[:user_name], params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.nil?
       resp[:json][:text] = "There is no challenge to accept(challenges expire in 1 min)"
@@ -82,7 +82,7 @@ class Api::GamesController < ApplicationController
   end
 
   def decline
-    @challenge = Challenge.find_challenge(params[:user_name], params[:channel_id])
+    @challenge = Challenge.find_valid_challenge(params[:user_name], params[:channel_id])
     resp = dup(DEFAULT_RESP)
     if @challenge.nil?
       resp[:json][:text] = "There is no challenge to decline(challenges expire in 1 min)"
@@ -125,7 +125,6 @@ class Api::GamesController < ApplicationController
   end
 
   def how
-    origin = request.headers.env["HTTP_ORIGIN"]
     instructions =
     "How to play a game of Tic-Tac-Toe:\n
     1. Start by challeging another user with `/challenge [username]`\n
@@ -168,7 +167,15 @@ class Api::GamesController < ApplicationController
       if x_active && o_active
         resp[:json][:text] = "Everything looks fine"
       else
-        resp[:json][:text] = "Looks like players have left the Slack channel! This game is now abandoned"
+        who_left = ""
+        if !x_active && !o_active
+          who_left = "both players"
+        elsif !x_active
+          who_left = game.x
+        else
+          who_left = game.o
+        end
+        resp[:json][:text] = "Looks like #{who_left} left the Slack channel! This game is now abandoned"
         resp[:json][:response_type] = "in_channel"
         game.abandon
       end
