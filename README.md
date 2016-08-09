@@ -1,5 +1,5 @@
 # Slack Tic-Tac-Toe
-Slack Tic-Tac-Toe was created for [this Slack Channel][slack_link]. Please see [here][technical_note] for technical notes of the app..
+Slack Tic-Tac-Toe was created for [this Slack Channel][slack_link]. Please see [here][technical_note] for the technical notes.
 
 ## How to play
 The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/abandon`, `/show_board`, `/check`, and `/how`.
@@ -7,8 +7,8 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 * First you need to challenge another user with `/challenge [username]` command.
 * The command does not work if...
   - user is not a member of the team.
-  - user is not logged-in ('active' status)
-  - username is blank
+  - user is not logged-in ('active' status).
+  - username is blank.
 * The challenge user either `/accept` or `/decline` the challenge. If the user accepts the challenge, the new game will begin.
 * Notes:
   - Challenges expire in one minute.
@@ -18,15 +18,15 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 ### While playing the game
 * On you turn, place your mark with `/mark [position]`.
 * valid entries are numbers from 1 to 9.
-* Either of the players can always abandon the game with `/abandon`
+* Either of the players can abandon the game anytime with `/abandon`
 
 ### Checking the game status
 * Any user, players or audience, can use `/show_board` to see the current status of the game.
-* If no game is in progress, it shows the result of the most recent game.
+* If no game is in progress, it shows the result of the most recent game and when it ended.
 
 ### If players leave during the game...
 * If players leave Slack without completing the game (or properly abandoning using `/abandon` command), other users cannot start a new game in the channel. `/check` command solves this problem!
-* Any user, player or audience, can use `/check` command while a game is taking place. If both players are in 'active' status, the command does nothing. However, if any of the players has gone offline ('away' status), `/check` command cancels the game so that other users can start a new game.
+* Any user, player or audience, can use `/check` command while a game is taking place. If both players are in 'active' status, the command does nothing. However, if any of the players has gone offline ('away' status), it cancels the game so that other users can start a new game.
 
 ### Quick Help
 * You can get basic instructions with the `/how` command.
@@ -35,11 +35,13 @@ The available commands are `/challenge`, `/accept`, `/decline`, `/mark`, `/aband
 * If you add extra text after the command, that will be ignored.
 * For example, if you type `/accept challenge`, only `/accept` will be registered. Similarly, `/challenge this_user that_user` will setup a challenge only for 'this_user', and 'that_user' is ignored.
 
+
+
 <a name="tech_note"></a>
 ## Technical notes
 
-### App Backend
-Slack Tic-Tac-Toe's backend was built on Ruby on Rails following the basic MVC principles. The database is run on PostgreSQL, and the application was deployed to and run by Heroku.
+### Backend Structure
+Slack Tic-Tac-Toe's backend was built on Ruby on Rails following the basic MVC principles. The database runs on PostgreSQL, and the application was deployed to and run by Heroku.
 
 ***Models:***
 Most of the game logic is taken care of in the Models. Three models/tables are used in this app. 'Challenge' and 'Board' models handle most of the game logic. Due to the simplicity of the application, 'Challenge' and 'Board' don't have associations to each other. Once a challenge is accepted, there is no need to access its information anymore. The boards table keeps such information as players' usernames, channel_id, the current_status of the board, and the status of the game. See [schema][schema] for more information.
@@ -59,7 +61,7 @@ Most of the game logic is taken care of in the Models. Three models/tables are u
 All responses to Slack are sent in JSON format with the status code 200.
 
 ***View:***
-I did not use View for this app, and I could have used setup jbuilder view files and made the GamesController simpler, free of formatting logic, and easier to read. However, I skipped this simply because I don't have enough time now.
+I did not use View for this app. I could have used setup jbuilder view files and made the GamesController simpler, free of formatting logic, and easier to read. However, I skipped this simply because I don't have time to handle that and finish the assignment on time.
 
 ### API Endpoints
 All incoming requests are done by POST request so that when (or if) I bundle the game into a Slack App, I won't have to change the router. (I read that Slack App only sends POST requests). Each slash command name matches the names of the route and controller method.
@@ -74,10 +76,10 @@ domain: https://hiro-slack-ttt.herokuapp.com/
 - POST api/games/check => GamesController#check
 - POST api/games/how => GamesController#how
 
-Additionally, it accepts GET request to any unmatched routes, and returns a response with the status 200 with a JSON message "Hi Slack people!". This feature was implemented to accommodate SSL checking.
+Additionally, it accepts GET request to any unmatched routes, and returns a response with the status 200 with a JSON message "Hi Slack people!". This was implemented to accommodate for SSL checking from Slack.
 
 ### Security and Credentials
-Slack Tic-Tac-Toe verifies the parameter "token" for all incoming requests besides GET request. Tokens issued by Slack are stored in the server database, and any incoming requests from other sites without valid tokens will fail. Please see the code [here][slash_command_token]
+Slack Tic-Tac-Toe verifies the parameter "token" for all incoming requests except for GET request. Tokens issued by Slack are stored in the server database, and any incoming requests from other sites without valid tokens will fail. Please see the code [here][slash_command_token]
 
 When the app makes a request to Slack API, it retrieves the token from the database. The app uses Slack API Tester token, which, I think, is sufficient for the purpose of the assignment.
 
@@ -92,9 +94,9 @@ These [RSpec files][rspec_files_folder] were written to thoroughly test the func
 ***Integration Test:***
 This [jasmine spec][jasmine_file] tests API endpints. It sends actual HTTP requests to the server and verifies responses. I originally attempted using `runs()` and `waitsFor()` to properly tests the responses of asynchronous calls. However, I soon learned that they were deprecated features in newer versions of Jasmine. Instead, I  chained multiple HTTP calls using callbacks, and by passing the optional `done()` callback on `beforeEach()` and `it()` blocks. [Reference][Jasmin_doc]
 
-I ran the Jasmine spec in two spec runner; one to test the local server in the development environment, the other to test the production environment after the deployment to Heroku. Since the spec was not run in the test environment, I manually reset the database state with [this test-only controller method][games#destroy_all] so that all specs are run independently from the others. (It might not have been the best practice, but it served my purpose just this time.)
+I ran the Jasmine spec in two different spec runners; one to test the local server in the development environment, the other to test the production environment after the deployment to Heroku. Since the spec was not run in the test environment, I manually reset the database state with [this test-only controller method][games#destroy_all] so that all specs are run independently from the others. (It might not have been the best practice, but it served my purpose just this time.)
 
-After the initial implementation of the game, I changed the `#challenge` method so that it makes a request to Slack API `users.list` to confirm the users' active status. The change is not reflected on the Jasmine specs, and I manually tested the new feature on the Slack Channels directly. Please note that most Jasmine specs fail with the current implementation.
+After the initial implementation of the game, I changed the `#challenge` method so that it makes a request to Slack API to confirm the users' active status. The change is not reflected on the Jasmine specs, because I manually tested the new feature on the Slack Channels directly. Please note that most Jasmine specs fail with the current implementation.
 
 [technical_note]:#tech_note
 [slack_link]:https://ae27583885test0.slack.com/messages/general/
