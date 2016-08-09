@@ -27,33 +27,38 @@ class Api::GamesController < ApplicationController
   def challenge
     challenger = params[:user_name]
     challenged = params[:text].gsub(/\s+.*/, "")
-
     resp = dup(DEFAULT_RESP)
-    team_user_status = get_team_user_status
 
-    if !team_user_status.is_a?(Hash)
-      resp[:json][:text] = team_user_status
+    if challenged.length < 1
+      resp[:json][:text] = "Username is missing."
+    elsif challenged == "slackbot"
+      resp[:json][:text] = "Slackbot cannot accept the challenge"
 
-    elsif team_user_status.keys.include?(challenged)
-      if team_user_status[challenged] == "active"
-        @challenge = Challenge.new(challenger: challenger,
-                                   challenged: challenged,
-                                   channel_id: params[:channel_id])
-        if @challenge.save
-          resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond either with `/accept` or `/decline`)"
-          resp[:json][:response_type] = "in_channel"
-        else
-          resp[:json][:text] = @challenge.errors[:resp].join(", ")
-        end
-      elsif challenged == "slackbot"
-        resp[:json][:text] = "Slackbot cannot accept the challenge"
-      else
-        resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
-      end
-    elsif challenged.length == 1
-      resp[:json][:text] = "username is missing"
     else
-      resp[:json][:text] = "#{challenged} is not a member of the team"
+      team_user_status = get_team_user_status
+      if team_user_status.is_a?(String) # if get_team_user_status returns error msg
+        resp[:json][:text] = team_user_status
+
+      else
+        if !team_user_status.keys.include?(challenged)
+          resp[:json][:text] = "#{challenged} is not a member of the team"
+        else
+          if team_user_status[challenged] != "active"
+            resp[:json][:text] = "#{challenged} is away and can't accept your challenge"
+
+          else team_user_status[challenged] == "active"
+            @challenge = Challenge.new(challenger: challenger,
+                                       challenged: challenged,
+                                       channel_id: params[:channel_id])
+            if @challenge.save
+              resp[:json][:text] = "#{@challenge.challenger} challenges #{@challenge.challenged} on the game of Tic-Tac-Toe.\n#{@challenge.challenged}, do you accept? (respond with `/accept` or `/decline`)"
+              resp[:json][:response_type] = "in_channel"
+            else
+              resp[:json][:text] = @challenge.errors[:resp].join(", ")
+            end
+          end
+        end
+      end
     end
     render resp
   end
