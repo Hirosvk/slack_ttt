@@ -100,9 +100,12 @@ It's the most familiar web application framework for me.
 
 ## Failures
 
+
 ## How do I want to be managed?
+I want to strike a good balance between guidance and independence with my manager. I consider myself to be a flexible team player, and I am open to different styles of management. It can get frustrating for me when expectations are not clear, and it leads to misunderstanding. I'm fine with my manager telling me, for example, that I have not earned his trust.
 
 ## How do I work with colleagues?
+
 
 ## Producing quality work
 
