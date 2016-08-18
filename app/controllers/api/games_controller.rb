@@ -36,7 +36,7 @@ class Api::GamesController < ApplicationController
 
     else
       team_user_status = get_team_user_status
-      if team_user_status.is_a?(String) # if get_team_user_status returns error msg
+      if team_user_status.is_a?(String) # if get_team_user_status returns an error msg
         resp[:json][:text] = team_user_status
 
       else
