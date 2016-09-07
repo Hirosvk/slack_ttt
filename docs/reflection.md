@@ -28,7 +28,7 @@ After the whole project is done, I did a few manual testing as well, of course.
 ## what I learned
 
 ## what I would do differently
-I could have worked on this project for a month, so I had to stop somewhere and turn it in when I felt that my work was good enough for the assignment.
+I could work on this project for a month, so I had to stop somewhere and turn it in when I felt that my work was good enough for the assignment.
 
 Organizing the controller logics. On my current design, there are so many conditions that each controller method checks for. I would refactor and keep it dry by extracting conditionals into individual methods. Through that process, I might make the response into an instance variable. I would also make a simple view file in jbuilder format to take the response parsing logic out of the controller.
 
@@ -39,7 +39,7 @@ Be able to mark the spot with buttons instead of commands. Is that possible?
 ## taking it further
 Create User Model/table and join with Board Model. I would then make is so that users can see their past games' results. For example, with `/record [param]` command, users can see their past games with specific time period, opponents, or channels. I would need to make user_board join tables. Board 'has many(actually two)' players. Each player has many boards. User#recent_results. When initialing the game, the app should take user name as well as user_id so that we can track the same users on different teams.
 
-Customize Slack-side's settings, and add emoji, for examples. Make it more fun and inviting.
+Customize settings on Slack side, and add emoji, for examples. Make it more fun and inviting.
 
 Create a bot that you can play the game with. I would need to setup an AI on the app server, and setup an event listener on Slack channel. The game logic is relatively easy and have had experience in building AI.
 
@@ -50,6 +50,7 @@ I had no idea that these features were available. I makes me so excited to imagi
 Open source: I saw that there is a community of developers contributing. I felt like I was invited to the community.
 
 ## Suggestions for Slack
+
 Make the text more customizable. I felt that it was limiting that it only allows a few markdown commands and links. How about changing colors of text? More font features like underline, changing colors? Having built web app with HTML/CSS/JS, I felt that I have a very few options. Of course, I am not sure if it's a tech-constraint or intentional design decision.
 
 Description of the integration options were excellently written. However, I was lost at times on how to do it actually. For example, I was looking for a way to get a token to access Slack API. I know that I had to build an app (so I did), but I could not figure out how to receive the token. I ended up using a Tester token, and I was fine for the purpose of the game.
@@ -57,10 +58,12 @@ Description of the integration options were excellently written. However, I was 
 
 ## how to scale
 Scaling the app
-- I would closely look at the controller and minimize the number of times it hits the database. Optimize database query by pulling out the data on one query, and use the data.
+- I would take a closer look at the controller and minimize the number of times it hits the database. Optimize database query by pulling out the data on one query, and use the data.
+
+- I might eliminate some validations to speed up writes to the DB.
 
 Scaling the architecture
-- Now it's running on Webrick server, which takes 50 reqs/sec. with hundreds and thousands of requests coming in to the app, I first need to upgrade the server and scale out by adding more servers and a load balancer. It doesn't have heavy assets, so CDN wouldn't be necessary, but if I would be using some picture files, then I would more them to CDN. I would need to setup external DB server. Denormalization of the SQL would not be good because this app does a lot of write. I don't know if caching makes sense, because the data changes so frequently as the game goes on... Most users would probably play the game, and checking the record would not be request frequently.
+- Now it's running on Webrick server, which takes 100 reqs/sec (single threaded). with hundreds and thousands of requests coming in to the app, I first need to upgrade the server to somthing like Puma that takes upto 2000 req/sec and multi-threaded, and scale out by adding more servers and a load balancer. It doesn't have heavy assets, so CDN wouldn't be necessary, but if I would be using some picture files, then I would more them to CDN. I would need to setup external DB server. Denormalization of the SQL would not be good because this app does a lot of write. I don't know if caching makes sense, because the data changes so frequently as the game goes on... Most users would probably play the game, and checking the record would not be request frequently.
 
 - If I have an AI for this app, then I would run in on a separate server so that AI's "thinking" doesn't slow down other operations.
 
@@ -78,12 +81,14 @@ It's the most familiar web application framework for me.
 ## Why Slack?
 - successful app with huge user base
 - leader of messaging app(open source -> facilitate collaboration)
-- exceptionally respectful to candidates --> it shows the high level of care the company provides to other aspect of the business like taking care of customers, employees, and quality of the products.
-- respect was evident from the pricing model, too.
 - so many different technologies(C++, PHP, JS, Go, Swift, C#, etc....)
-
 - I am looking for a place where I can work for 5+ years, where I can keep challenging myself.
 - as skilled entry-level engineer, I see a huge growth opportunity
+
+
+- exceptionally respectful to candidates --> it shows the high level of care the company provides to other aspect of the business like taking care of customers, employees, and quality of the products.
+- respect was evident from the pricing model, too.
+- has a great deal of empathy beyond making money.
 
 ## Why Slack now?
 - I took a risk and learned software engineering
@@ -99,18 +104,26 @@ It's the most familiar web application framework for me.
 ## Achievement
 
 ## Failures
-
+I hard coded the token during development and push it onto GitHub. Quickly fixed it. My lack of production experience showed.
 
 ## How do I want to be managed?
 I want to strike a good balance between guidance and independence with my manager. I consider myself to be a flexible team player, and I am open to different styles of management. It can get frustrating for me when expectations are not clear, and it leads to misunderstanding. I'm fine with my manager telling me, for example, that I have not earned his trust.
 
 ## How do I work with colleagues?
-
+I am flexible. I just want to make expectations clear.
 
 ## Producing quality work
 
 
 ## Questions
 - Can you give me a very brief overview of what Slacks' architecture looks like? What app server do you use? How much do you own as Slack?
+
 - Can you tell me about the application engineering team? How many people? What is unique about the team besides what they build?
+
 - How does your current role fulfill your professional goal?
+
+- Why does Slack choose so many different frameworks, and how the decisions is made? What are downsides of using so many different languages? I heard that some people use, for example, Node.js for backend to unify their framework in web application.
+
+- Are there anything that I did exceptionally well, or anything major that I missed?
+
+- such a short amount of time to fix. How does it work?
